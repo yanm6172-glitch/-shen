@@ -1,4 +1,14 @@
 .page { padding-bottom: 160rpx; }
+.setup-head {
+  margin: 24rpx 24rpx 20rpx;
+  background: linear-gradient(135deg, #6C5CE7, #8E7CFF);
+  border-radius: 24rpx;
+  padding: 34rpx 32rpx;
+  color: #fff;
+  box-shadow: 0 10rpx 28rpx rgba(108, 92, 231, 0.3);
+}
+.setup-name { font-size: 36rpx; font-weight: 800; }
+.setup-sub { font-size: 24rpx; opacity: 0.9; margin-top: 10rpx; }
 .setup-title { font-size: 34rpx; font-weight: 800; }
 .field-label { font-weight: 700; }
 

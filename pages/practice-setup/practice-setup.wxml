@@ -1,7 +1,7 @@
 <view class="page" wx:if="{{bank}}">
-  <view class="card">
-    <view class="setup-title">{{bank.name}}</view>
-    <view class="text-2 mt8">共 {{bank.total}} 题</view>
+  <view class="setup-head">
+    <view class="setup-name">{{bank.name}}</view>
+    <view class="setup-sub">共 {{bank.total}} 题 · 单选 {{bank.typeStats.single}} · 多选 {{bank.typeStats.multi}} · 判断 {{bank.typeStats.judge}} · 填空 {{bank.typeStats.fill}} · 解答 {{bank.typeStats.short}}</view>
   </view>
 
   <view class="card">

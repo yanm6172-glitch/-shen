@@ -14,6 +14,26 @@
 .score-detail { font-size: 24rpx; opacity: 0.9; margin-top: 16rpx; }
 .score-dur { font-size: 24rpx; opacity: 0.95; font-weight: 700; margin-top: 8rpx; }
 .score-title { font-size: 28rpx; font-weight: 700; margin-top: 12rpx; }
+.score-comment {
+  display: inline-block;
+  margin-top: 14rpx;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 24rpx;
+  padding: 8rpx 28rpx;
+  font-size: 26rpx;
+  font-weight: 700;
+}
+
+.review-filter { display: flex; gap: 16rpx; margin: 0 24rpx 8rpx; }
+.rf-tab {
+  padding: 10rpx 30rpx;
+  border-radius: 30rpx;
+  background: #fff;
+  color: #6B7080;
+  font-size: 24rpx;
+  box-shadow: 0 4rpx 14rpx rgba(35, 38, 47, 0.05);
+}
+.rf-tab.on { background: linear-gradient(135deg, #6C5CE7, #8E7CFF); color: #fff; font-weight: 700; }
 
 .field-label { font-weight: 700; margin-bottom: 16rpx; }
 .type-row { display: flex; align-items: center; gap: 16rpx; margin: 14rpx 0; }

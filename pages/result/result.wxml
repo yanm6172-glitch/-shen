@@ -5,6 +5,7 @@
     <view class="score-detail">共 {{summary.total}} 题 · 已答 {{summary.answered}} · 答对 {{summary.correct}} · 答错 {{summary.wrong}}{{summary.unjudged ? ' · 解答题提交 ' + summary.unjudged + ' 题' : ''}}</view>
     <view wx:if="{{summary.durText}}" class="score-dur">⏱ 用时 {{summary.durText}}</view>
     <view class="score-title">{{summary.title}}</view>
+    <view class="score-comment">{{summary.comment}}</view>
   </view>
 
   <view class="card">
@@ -47,6 +48,10 @@
   </view>
 
   <view class="section-title">答题回顾</view>
+  <view class="review-filter">
+    <view class="rf-tab {{filterWrong ? '' : 'on'}}" bindtap="setReviewFilter" data-mode="all">全部</view>
+    <view class="rf-tab {{filterWrong ? 'on' : ''}}" bindtap="setReviewFilter" data-mode="wrong">只看错题（{{summary.wrong}}）</view>
+  </view>
   <view class="card review-card" wx:for="{{reviewList}}" wx:key="qid" bindtap="toggleExpand" data-id="{{item.qid}}">
     <view class="row">
       <view class="badge badge-{{item.type}}">{{item.typeName}}</view>

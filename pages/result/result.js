@@ -15,6 +15,10 @@ Page({
       return;
     }
     const summary = practice.summarizeSession(session);
+    summary.comment = summary.score >= 90 ? '太棒了，掌握得很好！'
+      : summary.score >= 70 ? '不错，继续保持！'
+      : summary.score >= 60 ? '及格了，再巩固一下！'
+      : '别灰心，去错题本练一练！';
     if (summary.durationSec > 0) {
       const mm = Math.floor(summary.durationSec / 60);
       const ss = summary.durationSec % 60;
@@ -36,7 +40,14 @@ Page({
     });
     this.session = session;
     this.summary = summary;
-    this.setData({ summary, reviewList, expanded: {} });
+    this.allReview = reviewList;
+    this.setData({ summary, reviewList, expanded: {}, filterWrong: false });
+  },
+  setReviewFilter(e) {
+    const mode = e.currentTarget.dataset.mode; // all | wrong
+    const filterWrong = mode === 'wrong';
+    const reviewList = filterWrong ? this.allReview.filter(r => r.correct === false) : this.allReview;
+    this.setData({ filterWrong, reviewList, expanded: {} });
   },
   userText(r) {
     const ua = r.userAnswer;
