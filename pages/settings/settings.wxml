@@ -1,0 +1,89 @@
+<view class="page">
+  <!-- 错题规则 -->
+  <view class="section-title">📕 错题集规则</view>
+  <view class="card">
+    <view class="row space-between">
+      <view>
+        <view class="field-label">连续做对 N 遍移出错题集</view>
+        <view class="text-3">当前：{{removeAfter === 0 ? '永不自动移除（可手动移出）' : '做对 ' + removeAfter + ' 遍自动移除'}}</view>
+      </view>
+      <view class="stepper">
+        <view class="step-btn" bindtap="stepRemove" data-v="-1">−</view>
+        <view class="step-num">{{removeAfter === 0 ? '∞' : removeAfter}}</view>
+        <view class="step-btn" bindtap="stepRemove" data-v="1">＋</view>
+      </view>
+    </view>
+    <slider min="0" max="10" step="1" value="{{removeAfter}}" bindchange="changeRemove" activeColor="#6C5CE7" block-size="24" show-value="{{false}}" />
+    <view class="text-3">0 = 不自动移除；1~10 = 连续做对相应遍数后自动移出（自由选择）</view>
+  </view>
+
+  <!-- 刷题默认 -->
+  <view class="section-title">✍ 刷题默认</view>
+  <view class="card">
+    <view class="row space-between">
+      <view>
+        <view class="field-label">选项乱序</view>
+        <view class="text-3">选择题选项自动打乱（按内容判分，不受影响）</view>
+      </view>
+      <switch checked="{{shuffleOptions}}" bindchange="toggleShuffleO" color="#6C5CE7" />
+    </view>
+    <view class="divider"></view>
+    <view class="row space-between">
+      <view>
+        <view class="field-label">题目乱序</view>
+        <view class="text-3">每次刷题打乱出题顺序</view>
+      </view>
+      <switch checked="{{shuffleQuestions}}" bindchange="toggleShuffleQ" color="#6C5CE7" />
+    </view>
+    <view class="divider"></view>
+    <view class="row space-between">
+      <view>
+        <view class="field-label">答对自动跳下一题</view>
+        <view class="text-3">答对后自动进入下一题；关闭则手动点"下一题"</view>
+      </view>
+      <switch checked="{{autoNext}}" bindchange="toggleAutoNext" color="#6C5CE7" />
+    </view>
+  </view>
+
+  <!-- AI 接口 -->
+  <view class="section-title">🤖 AI 接口（交互背书）</view>
+  <view class="card">
+    <view class="field-label">接口地址（OpenAI 兼容）</view>
+    <input class="cfg-input" value="{{ai.baseURL}}" bindinput="onAIInput" data-field="baseURL" placeholder="https://api.deepseek.com/v1" />
+    <view class="field-label mt16">API 密钥</view>
+    <input class="cfg-input" value="{{ai.apiKey}}" bindinput="onAIInput" data-field="apiKey" password placeholder="sk-..." />
+    <view class="field-label mt16">模型名称</view>
+    <input class="cfg-input" value="{{ai.model}}" bindinput="onAIInput" data-field="model" placeholder="deepseek-chat" />
+    <view class="row mt16 gap8">
+      <button class="btn btn-plain flex1" bindtap="testAI" disabled="{{testing}}">{{testing ? '测试中…' : '测试连接'}}</button>
+    </view>
+    <view class="tip-block">
+      · 默认 DeepSeek（deepseek-chat），可换成 OpenAI / 通义 / 智谱等兼容接口<br/>
+      · 开发者工具里请勾选「不校验合法域名」；真机使用需在小程序后台配置 request 合法域名
+    </view>
+  </view>
+
+  <!-- 统计与数据 -->
+  <view class="section-title">📊 数据</view>
+  <view class="card" wx:if="{{stats}}">
+    <view class="row space-between">
+      <view>
+        <view class="field-label">累计刷题 {{stats.sessions}} 组</view>
+        <view class="text-3">答题 {{stats.answered}} · 答对 {{stats.correct}} · 答错 {{stats.wrong}}</view>
+      </view>
+    </view>
+    <view class="divider"></view>
+    <view class="row gap8">
+      <button class="btn btn-ghost flex1" bindtap="reimportBuiltin">重新导入内置内容</button>
+      <button class="btn btn-danger flex1" bindtap="clearAll">清空所有数据</button>
+    </view>
+  </view>
+
+  <!-- 帮助 -->
+  <view class="section-title">💡 帮助</view>
+  <view class="card">
+    <view class="help-row" bindtap="showHelp">📄 支持的导入格式说明 ›</view>
+    <view class="divider"></view>
+    <view class="help-row" bindtap="showAbout">ℹ️ 关于本应用 ›</view>
+  </view>
+</view>

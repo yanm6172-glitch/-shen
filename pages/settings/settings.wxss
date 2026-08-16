@@ -1,0 +1,31 @@
+.page { padding-bottom: 80rpx; }
+.field-label { font-weight: 700; }
+
+.stepper { display: flex; align-items: center; gap: 12rpx; }
+.step-btn {
+  width: 64rpx; height: 64rpx;
+  border-radius: 50%;
+  background: #F1EEFF;
+  color: #6C5CE7;
+  font-size: 36rpx;
+  display: flex; align-items: center; justify-content: center;
+}
+.step-num { font-size: 36rpx; font-weight: 800; min-width: 60rpx; text-align: center; }
+
+.cfg-input {
+  background: #F7F8FB;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  font-size: 26rpx;
+  margin-top: 8rpx;
+}
+.tip-block {
+  margin-top: 16rpx;
+  font-size: 22rpx;
+  color: #9AA0B5;
+  line-height: 1.8;
+}
+.gap8 { gap: 20rpx; }
+.flex1 { flex: 1; }
+
+.help-row { padding: 8rpx 0; font-size: 28rpx; }

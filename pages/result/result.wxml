@@ -1,0 +1,68 @@
+<view class="page" wx:if="{{summary}}">
+  <view class="score-card">
+    <view class="score-num">{{summary.score}}</view>
+    <view class="score-label">得分</view>
+    <view class="score-detail">共 {{summary.total}} 题 · 已答 {{summary.answered}} · 答对 {{summary.correct}} · 答错 {{summary.wrong}}{{summary.unjudged ? ' · 解答题提交 ' + summary.unjudged + ' 题' : ''}}</view>
+    <view class="score-title">{{summary.title}}</view>
+  </view>
+
+  <view class="card">
+    <view class="field-label">按题型统计</view>
+    <view class="type-row" wx:if="{{summary.byType.single.n}}">
+      <view class="badge badge-single">单选</view>
+      <view class="flex1 text-2">{{summary.byType.single.c}} / {{summary.byType.single.n}}</view>
+      <view class="progress-bar flex1">
+        <view class="progress-fill" style="width: {{summary.byType.single.n ? summary.byType.single.c / summary.byType.single.n * 100 : 0}}%"></view>
+      </view>
+    </view>
+    <view class="type-row" wx:if="{{summary.byType.multi.n}}">
+      <view class="badge badge-multi">多选</view>
+      <view class="flex1 text-2">{{summary.byType.multi.c}} / {{summary.byType.multi.n}}</view>
+      <view class="progress-bar flex1">
+        <view class="progress-fill" style="width: {{summary.byType.multi.n ? summary.byType.multi.c / summary.byType.multi.n * 100 : 0}}%"></view>
+      </view>
+    </view>
+    <view class="type-row" wx:if="{{summary.byType.judge.n}}">
+      <view class="badge badge-judge">判断</view>
+      <view class="flex1 text-2">{{summary.byType.judge.c}} / {{summary.byType.judge.n}}</view>
+      <view class="progress-bar flex1">
+        <view class="progress-fill" style="width: {{summary.byType.judge.n ? summary.byType.judge.c / summary.byType.judge.n * 100 : 0}}%"></view>
+      </view>
+    </view>
+    <view class="type-row" wx:if="{{summary.byType.fill.n}}">
+      <view class="badge badge-fill">填空</view>
+      <view class="flex1 text-2">{{summary.byType.fill.c}} / {{summary.byType.fill.n}}</view>
+      <view class="progress-bar flex1">
+        <view class="progress-fill" style="width: {{summary.byType.fill.n ? summary.byType.fill.c / summary.byType.fill.n * 100 : 0}}%"></view>
+      </view>
+    </view>
+    <view class="type-row" wx:if="{{summary.byType.short.n}}">
+      <view class="badge badge-short">解答</view>
+      <view class="flex1 text-2">{{summary.byType.short.c}} / {{summary.byType.short.n}}</view>
+      <view class="progress-bar flex1">
+        <view class="progress-fill" style="width: {{summary.byType.short.n ? summary.byType.short.c / summary.byType.short.n * 100 : 0}}%"></view>
+      </view>
+    </view>
+  </view>
+
+  <view class="section-title">答题回顾</view>
+  <view class="card review-card" wx:for="{{reviewList}}" wx:key="qid" bindtap="toggleExpand" data-id="{{item.qid}}">
+    <view class="row">
+      <view class="badge badge-{{item.type}}">{{item.typeName}}</view>
+      <view class="rev-icon {{item.correct === true ? 'rev-ok' : (item.correct === false ? 'rev-bad' : 'rev-mid')}}">{{item.correct === true ? '✓' : (item.correct === false ? '✗' : '·')}}</view>
+      <view class="rev-stem flex1">{{item.stem}}</view>
+    </view>
+    <block wx:if="{{expanded[item.qid]}}">
+      <view class="divider"></view>
+      <view wx:if="{{item.options.length}}" class="rev-line" wx:for="{{item.options}}" wx:for-item="opt" wx:key="*this">{{opt}}</view>
+      <view class="rev-line rev-user">{{item.correct === null ? '已提交（不判分）：' : '你的答案：'}}{{item.userAnswerText || '（未作答）'}}</view>
+      <view class="rev-line rev-ans">参考答案：{{item.answerText}}</view>
+      <view wx:if="{{item.analysis}}" class="rev-line rev-analysis">解析：{{item.analysis}}</view>
+    </block>
+  </view>
+
+  <view class="bottom-bar">
+    <button class="btn btn-plain flex1" bindtap="again">再来一组</button>
+    <button class="btn btn-primary flex1" bindtap="{{summary.mode==='wrongbook' ? 'backWrong' : 'backHome'}}">完成</button>
+  </view>
+</view>

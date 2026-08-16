@@ -1,0 +1,40 @@
+.page { padding-bottom: 160rpx; }
+.setup-title { font-size: 34rpx; font-weight: 800; }
+.field-label { font-weight: 700; }
+
+.type-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin-top: 16rpx;
+}
+.type-chip {
+  padding: 10rpx 28rpx;
+  border-radius: 30rpx;
+  background: #F2F3F8;
+  color: #6B7080;
+  font-size: 26rpx;
+}
+.type-chip.on-single { background: #EAF1FE; color: #4A7CF7; font-weight: 700; }
+.type-chip.on-multi { background: #FEF3E2; color: #F59E0B; font-weight: 700; }
+.type-chip.on-judge { background: #E7F8F1; color: #10B981; font-weight: 700; }
+.type-chip.on-fill { background: #F1EEFF; color: #6C5CE7; font-weight: 700; }
+.type-chip.on-short { background: #E4F8F5; color: #14B8A6; font-weight: 700; }
+
+.picker-val { color: #6C5CE7; font-weight: 600; font-size: 26rpx; }
+.mini { font-size: 24rpx; line-height: 2.2; padding: 0 24rpx; }
+.rule-tip {
+  margin-top: 16rpx;
+  font-size: 24rpx;
+  color: #B45309;
+  background: #FFFBEB;
+  border-radius: 12rpx;
+  padding: 14rpx 18rpx;
+}
+.bottom-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 20rpx 24rpx calc(20rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  box-shadow: 0 -6rpx 24rpx rgba(35, 38, 47, 0.06);
+}

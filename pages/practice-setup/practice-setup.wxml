@@ -1,0 +1,69 @@
+<view class="page" wx:if="{{bank}}">
+  <view class="card">
+    <view class="setup-title">{{bank.name}}</view>
+    <view class="text-2 mt8">共 {{bank.total}} 题</view>
+  </view>
+
+  <view class="card">
+    <view class="field-label">题型（可多选）</view>
+    <view class="type-grid">
+      <view class="type-chip {{types.single?'on-single':''}}" bindtap="toggleType" data-type="single">单选 {{bank.typeStats.single}}</view>
+      <view class="type-chip {{types.multi?'on-multi':''}}" bindtap="toggleType" data-type="multi">多选 {{bank.typeStats.multi}}</view>
+      <view class="type-chip {{types.judge?'on-judge':''}}" bindtap="toggleType" data-type="judge">判断 {{bank.typeStats.judge}}</view>
+      <view class="type-chip {{types.fill?'on-fill':''}}" bindtap="toggleType" data-type="fill">填空 {{bank.typeStats.fill}}</view>
+      <view class="type-chip {{types.short?'on-short':''}}" bindtap="toggleType" data-type="short">解答 {{bank.typeStats.short}}</view>
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="row space-between">
+      <view class="field-label">题量</view>
+      <picker range="{{countOptions}}" value="{{countIndex}}" bindchange="onCountChange">
+        <view class="picker-val">{{countOptions[countIndex]}} ▾</view>
+      </picker>
+    </view>
+    <view class="divider"></view>
+    <view class="row space-between">
+      <view>
+        <view class="field-label">乱序题目</view>
+        <view class="text-3">打乱出题顺序</view>
+      </view>
+      <switch checked="{{shuffleQuestions}}" bindchange="toggleShuffleQ" color="#6C5CE7" />
+    </view>
+    <view class="row space-between mt16">
+      <view>
+        <view class="field-label">乱序选项</view>
+        <view class="text-3">选择题选项打乱（按文本判对错，不受影响）</view>
+      </view>
+      <switch checked="{{shuffleOptions}}" bindchange="toggleShuffleO" color="#6C5CE7" />
+    </view>
+    <view class="divider"></view>
+    <view class="row space-between">
+      <view>
+        <view class="field-label">答对自动跳下一题</view>
+        <view class="text-3">答对后自动进入下一题；关闭则手动点"下一题"</view>
+      </view>
+      <switch checked="{{autoNext}}" bindchange="toggleAutoNext" color="#6C5CE7" />
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="row space-between">
+      <view>
+        <view class="field-label">错题去向</view>
+        <view class="text-3">答错的题自动进入所选错题集</view>
+      </view>
+      <picker range="{{wrongBooks}}" value="{{targetIndex}}" bindchange="onTargetChange">
+        <view class="picker-val">{{wrongBooks[targetIndex]}} ▾</view>
+      </picker>
+    </view>
+    <view class="row mt16">
+      <button class="btn btn-ghost mini" bindtap="createWrongBook">＋ 新建错题集</button>
+    </view>
+    <view class="rule-tip">📌 错题规则：连续做对 {{removeAfter === 0 ? '不自动移除' : removeAfter + ' 遍自动移出错题集'}}（可在"设置"页修改）</view>
+  </view>
+
+  <view class="bottom-bar">
+    <button class="btn btn-primary btn-block" bindtap="start">开始刷题</button>
+  </view>
+</view>

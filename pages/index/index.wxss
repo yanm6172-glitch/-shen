@@ -1,0 +1,72 @@
+.page { padding-bottom: 60rpx; }
+
+.hero {
+  background: linear-gradient(135deg, #6C5CE7 0%, #8E7CFF 60%, #A99BFF 100%);
+  padding: 60rpx 40rpx 90rpx;
+  color: #fff;
+}
+.hero-title { font-size: 48rpx; font-weight: 800; letter-spacing: 4rpx; }
+.hero-sub { font-size: 24rpx; opacity: 0.85; margin-top: 12rpx; }
+
+.resume {
+  margin-top: -50rpx;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  border-left: 8rpx solid #6C5CE7;
+}
+.resume-icon {
+  width: 64rpx; height: 64rpx; border-radius: 50%;
+  background: #F1EEFF; color: #6C5CE7;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28rpx;
+}
+.resume-title { font-weight: 700; }
+.resume-sub { font-size: 24rpx; margin-top: 4rpx; }
+
+.stats-card {
+  display: flex;
+  margin-top: 24rpx;
+}
+.stat { flex: 1; text-align: center; }
+.stat-num { font-size: 40rpx; font-weight: 800; }
+.stat-num.green { color: #10B981; }
+.stat-label { font-size: 22rpx; color: #9AA0B5; margin-top: 4rpx; }
+
+.entry-row {
+  display: flex;
+  gap: 20rpx;
+  margin: 8rpx 24rpx;
+}
+.entry {
+  flex: 1;
+  border-radius: 28rpx;
+  padding: 36rpx 30rpx;
+  color: #fff;
+  box-shadow: 0 10rpx 28rpx rgba(35, 38, 47, 0.12);
+}
+.entry-quiz { background: linear-gradient(135deg, #4A7CF7, #6FA3FF); }
+.entry-memo { background: linear-gradient(135deg, #14B8A6, #3ED3BF); }
+.entry-icon { font-size: 52rpx; }
+.entry-title { font-size: 38rpx; font-weight: 800; margin-top: 16rpx; }
+.entry-desc {
+  font-size: 22rpx; opacity: 0.9; margin-top: 8rpx;
+  white-space: pre-line; line-height: 1.6;
+}
+
+.quick { padding: 10rpx 30rpx; }
+.quick-item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 24rpx 0;
+  border-bottom: 2rpx solid #ECEEF4;
+}
+.quick-item:last-child { border-bottom: none; }
+.quick-icon {
+  width: 72rpx; height: 72rpx; border-radius: 20rpx;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34rpx;
+}
+.quick-title { font-weight: 700; }
+.quick-desc { font-size: 22rpx; margin-top: 4rpx; }

@@ -1,0 +1,14 @@
+.page { padding-bottom: 60rpx; }
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 24rpx 24rpx 8rpx;
+}
+.topbar-title { font-size: 34rpx; font-weight: 800; }
+.topbar-btn { font-size: 26rpx; line-height: 2.2; padding: 0 28rpx; }
+
+.memo-card { margin-top: 16rpx; }
+.memo-name { font-size: 32rpx; font-weight: 700; }
+.memo-del { font-size: 24rpx; color: #EF4444; padding: 4rpx 12rpx; }
+.memo-go { color: #6C5CE7; font-weight: 600; font-size: 26rpx; }

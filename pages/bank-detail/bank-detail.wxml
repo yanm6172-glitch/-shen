@@ -1,0 +1,34 @@
+<view class="page" wx:if="{{bank}}">
+  <view class="card head-card">
+    <view class="bank-name">{{bank.name}}</view>
+    <view class="row mt8">
+      <text class="badge badge-single">单选{{bank.typeStats.single}}</text>
+      <text class="badge badge-multi">多选{{bank.typeStats.multi}}</text>
+      <text class="badge badge-judge">判断{{bank.typeStats.judge}}</text>
+      <text class="badge badge-fill">填空{{bank.typeStats.fill}}</text>
+      <text class="badge badge-short">解答{{bank.typeStats.short}}</text>
+    </view>
+  </view>
+
+  <view class="card q-card" wx:for="{{questions}}" wx:key="id" bindtap="toggleExpand" data-id="{{item.id}}">
+    <view class="row">
+      <view class="badge badge-{{item.type}}">{{item.typeName}}</view>
+      <view class="q-stem flex1">{{item.stem}}</view>
+    </view>
+    <view class="row space-between mt8">
+      <text class="text-3">{{item.hasAnswer ? '答案：' + item.answerText : '无参考答案'}}</text>
+      <text class="text-3">{{expanded[item.id] ? '收起 ▲' : '展开 ▼'}}</text>
+    </view>
+    <block wx:if="{{expanded[item.id]}}">
+      <view class="divider"></view>
+      <view wx:if="{{item.options.length}}" class="opt-line" wx:for="{{item.options}}" wx:for-item="opt" wx:key="*this">{{opt}}</view>
+      <view class="ans-line">✅ 答案：{{item.hasAnswer ? item.answerText : '无（本题需自行判断）'}}</view>
+      <view wx:if="{{item.analysis}}" class="ans-line analysis">💡 解析：{{item.analysis}}</view>
+    </block>
+  </view>
+
+  <view class="bottom-bar">
+    <button class="btn btn-danger half" bindtap="deleteBank">删除题库</button>
+    <button class="btn btn-primary half" bindtap="startPractice">开始刷题（{{bank.total}}题）</button>
+  </view>
+</view>

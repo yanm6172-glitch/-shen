@@ -1,0 +1,38 @@
+<view class="page">
+  <view class="topbar">
+    <view class="topbar-title">我的错题集（{{books.length}}）</view>
+    <button class="btn btn-primary topbar-btn" bindtap="create">＋ 新建</button>
+  </view>
+
+  <view class="rule-card">
+    📌 当前规则：一道错题<text class="hl">连续做对 {{removeAfter === 0 ? '∞' : removeAfter}} 遍</text>{{removeAfter === 0 ? '，不自动移除（可手动移出）' : '自动移出错题集'}}。<text class="link" bindtap="goRule">去修改</text>
+  </view>
+
+  <block wx:if="{{books.length}}">
+    <view class="card book-card" wx:for="{{books}}" wx:key="id" bindtap="goDetail" data-id="{{item.id}}">
+      <view class="row space-between">
+        <view class="book-name">{{item.name}}</view>
+        <view class="row">
+          <view class="book-op" catchtap="rename" data-id="{{item.id}}" data-name="{{item.name}}">改名</view>
+          <view class="book-op danger" catchtap="remove" data-id="{{item.id}}" data-name="{{item.name}}">删除</view>
+        </view>
+      </view>
+      <view class="row space-between mt8">
+        <text class="text-2">共 {{item.count}} 题 · 已连续做对 {{item.mastered}} 题</text>
+        <text class="book-go">刷错题 ›</text>
+      </view>
+      <view class="progress-bar mt8">
+        <view class="progress-fill" style="width: {{item.count ? item.mastered / item.count * 100 : 0}}%"></view>
+      </view>
+    </view>
+  </block>
+
+  <view wx:else class="empty">
+    <view class="empty-icon">📕</view>
+    <view>还没有错题集</view>
+    <view class="text-3 mt8">刷题答错的题会自动进入这里</view>
+    <view class="mt16">
+      <button class="btn btn-primary" bindtap="create">＋ 新建错题集</button>
+    </view>
+  </view>
+</view>

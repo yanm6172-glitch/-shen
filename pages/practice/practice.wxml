@@ -1,0 +1,119 @@
+<view class="page" wx:if="{{dq}}">
+  <!-- 顶部进度 -->
+  <view class="topbar">
+    <view class="topbar-left">
+      <view class="topbar-title">{{title}}</view>
+      <view class="topbar-count">{{index + 1}} / {{total}} · 已对 {{correctCount}}</view>
+    </view>
+    <view class="exit-btn" bindtap="exit">退出</view>
+  </view>
+  <view class="progress-bar">
+    <view class="progress-fill" style="width: {{progress}}%"></view>
+  </view>
+
+  <!-- 题目卡片 -->
+  <view class="card q-card">
+    <view class="row">
+      <view class="badge badge-{{dq.type}}">
+        {{dq.type==='single'?'单选题':dq.type==='multi'?'多选题':dq.type==='judge'?'判断题':dq.type==='fill'?'填空题':'解答题'}}
+      </view>
+      <view wx:if="{{!hasAnswer}}" class="badge no-answer">无参考答案</view>
+    </view>
+    <view class="stem">{{dq.stem}}</view>
+
+    <!-- 单选 -->
+    <view wx:if="{{dq.type==='single'}}" class="options">
+      <view
+        wx:for="{{dq.options}}"
+        wx:key="key"
+        class="opt opt-{{optionStates[item.key]}} {{selected===item.key?'selected':''}}"
+        bindtap="tapOption"
+        data-key="{{item.key}}"
+      >
+        <view class="opt-key">{{item.key}}</view>
+        <view class="opt-text">{{item.text}}</view>
+      </view>
+    </view>
+
+    <!-- 多选 -->
+    <block wx:if="{{dq.type==='multi'}}">
+      <view class="options">
+        <view
+          wx:for="{{dq.options}}"
+          wx:key="key"
+          class="opt opt-{{optionStates[item.key]}} {{multiSelected[item.key]?'selected':''}}"
+          bindtap="tapOption"
+          data-key="{{item.key}}"
+        >
+          <view class="opt-key">{{item.key}}</view>
+          <view class="opt-text">{{item.text}}</view>
+        </view>
+      </view>
+      <button wx:if="{{phase==='answer'}}" class="btn btn-primary btn-block mt16" bindtap="confirmMulti">确认答案</button>
+    </block>
+
+    <!-- 判断 -->
+    <view wx:if="{{dq.type==='judge'}}" class="judge-row">
+      <view class="judge-btn {{judgeChoice==='T'?'judge-sel':''}} {{phase==='graded'?(dq.answer.judge?'judge-correct':'judge-dim'):''}}" bindtap="tapJudge" data-key="T">✔ 正确</view>
+      <view class="judge-btn {{judgeChoice==='F'?'judge-sel':''}} {{phase==='graded'?(!dq.answer.judge?'judge-correct':'judge-dim'):''}}" bindtap="tapJudge" data-key="F">✘ 错误</view>
+    </view>
+
+    <!-- 填空 -->
+    <block wx:if="{{dq.type==='fill'}}">
+      <view class="fill-row" wx:for="{{fillInputs}}" wx:key="id">
+        <view class="fill-label">第{{index + 1}}空</view>
+        <input
+          class="fill-input fill-{{fillStates[index]}}"
+          value="{{item.value}}"
+          bindinput="fillInput"
+          data-idx="{{index}}"
+          placeholder="输入答案"
+          placeholder-class="fill-ph"
+          disabled="{{phase!=='answer'}}"
+        />
+      </view>
+      <button wx:if="{{phase==='answer'}}" class="btn btn-primary btn-block mt16" bindtap="confirmFill">确认答案</button>
+    </block>
+
+    <!-- 解答 -->
+    <block wx:if="{{dq.type==='short'}}">
+      <textarea
+        class="short-area"
+        value="{{shortText}}"
+        bindinput="shortInput"
+        placeholder="写下你的答案…"
+        disabled="{{phase!=='answer'}}"
+      ></textarea>
+      <button wx:if="{{phase==='answer'}}" class="btn btn-primary btn-block mt16" bindtap="submitShort">提交答案</button>
+    </block>
+
+    <!-- 无参考答案自判 -->
+    <block wx:if="{{phase==='manual'}}">
+      <view class="manual-tip">本题没有参考答案，请自行判断：</view>
+      <view class="row gap8">
+        <button class="btn btn-primary flex1" bindtap="selfGrade" data-grade="right">我答对了</button>
+        <button class="btn btn-danger flex1" bindtap="selfGrade" data-grade="wrong">我答错了</button>
+      </view>
+    </block>
+
+    <!-- 判分结果 -->
+    <block wx:if="{{phase==='graded'}}">
+      <view class="grade-banner {{lastResult.correct === true ? 'g-ok' : (lastResult.correct === false ? 'g-bad' : 'g-mid')}}">
+        <view class="grade-main">{{lastResult.correct === true ? '✓ ' : (lastResult.correct === false ? '✗ ' : '📝 ')}}{{gradeMsg}}</view>
+        <view wx:if="{{wrongActionMsg}}" class="grade-sub">{{wrongActionMsg}}</view>
+        <view wx:if="{{lastResult.detail.unjudged}}" class="grade-sub">解答题不自动判分，请对照参考答案自查</view>
+      </view>
+      <view wx:if="{{correctAnswerText}}" class="answer-box">📖 参考答案：{{correctAnswerText}}</view>
+      <view wx:if="{{dq.analysis}}" class="analysis-box">💡 解析：{{dq.analysis}}</view>
+      <view wx:if="{{canAddShortWrong}}" class="row mt16">
+        <button class="btn btn-plain flex1" bindtap="addShortWrong">＋ 加入错题集</button>
+      </view>
+      <view wx:if="{{canRemoveShortWrong}}" class="row mt16">
+        <button class="btn btn-plain flex1" bindtap="removeShortWrong">移出错题集</button>
+      </view>
+      <button class="btn btn-primary btn-block mt16" bindtap="next">
+        {{index + 1 >= total ? '查看结果' : '下一题'}}
+      </button>
+    </block>
+  </view>
+</view>

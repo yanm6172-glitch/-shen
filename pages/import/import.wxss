@@ -1,0 +1,92 @@
+.page { padding-bottom: 200rpx; }
+
+.mode-tabs {
+  display: flex;
+  margin: 20rpx 24rpx;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 8rpx;
+  box-shadow: 0 6rpx 24rpx rgba(35, 38, 47, 0.05);
+}
+.mode-tab {
+  flex: 1;
+  text-align: center;
+  padding: 18rpx 0;
+  font-size: 28rpx;
+  color: #6B7080;
+  border-radius: 16rpx;
+}
+.mode-tab.active {
+  background: linear-gradient(135deg, #6C5CE7, #8E7CFF);
+  color: #fff;
+  font-weight: 700;
+}
+
+.hint-title { font-weight: 700; }
+.hint-sub { font-size: 22rpx; }
+
+.input-area {
+  width: 100%;
+  min-height: 420rpx;
+  background: #F7F8FB;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  font-size: 26rpx;
+  line-height: 1.7;
+}
+
+.mini {
+  flex: 1;
+  font-size: 24rpx;
+  line-height: 2.2;
+  padding: 0 12rpx;
+  margin: 0 8rpx;
+}
+
+.preview-head {
+  margin: 32rpx 28rpx 12rpx;
+}
+.preview-title { font-size: 32rpx; font-weight: 700; margin-bottom: 12rpx; }
+.preview-head .badge { margin-right: 8rpx; margin-bottom: 8rpx; }
+
+.warn-card { background: #FFFBEB; }
+.warn-title { font-weight: 700; color: #B45309; margin-bottom: 8rpx; }
+.warn-item { font-size: 24rpx; color: #92400E; margin: 6rpx 0; }
+
+.field-label { font-weight: 700; margin-bottom: 12rpx; }
+.name-input {
+  background: #F7F8FB;
+  border-radius: 12rpx;
+  padding: 18rpx 20rpx;
+  font-size: 28rpx;
+}
+
+.q-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14rpx;
+  padding: 18rpx 0;
+  border-bottom: 2rpx solid #ECEEF4;
+}
+.q-item:last-child { border-bottom: none; }
+.q-stem { flex: 1; font-size: 26rpx; line-height: 1.6; }
+.q-del { color: #EF4444; font-size: 28rpx; padding: 0 8rpx; }
+
+.sec-item { padding: 16rpx 0; border-bottom: 2rpx solid #ECEEF4; }
+.sec-item:last-child { border-bottom: none; }
+.sec-title { font-weight: 700; color: #6C5CE7; margin-bottom: 8rpx; }
+.sec-line { font-size: 26rpx; color: #6B7080; margin: 4rpx 0; }
+.qa-q { font-size: 26rpx; font-weight: 600; margin: 8rpx 0 4rpx; }
+.qa-a { font-size: 26rpx; color: #10B981; }
+
+.bottom-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 20rpx 24rpx calc(20rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  box-shadow: 0 -6rpx 24rpx rgba(35, 38, 47, 0.06);
+}
+
+.tip-card { margin-top: 24rpx; }
+.tip-title { font-weight: 700; margin-bottom: 12rpx; }
+.tip-line { font-size: 24rpx; color: #6B7080; margin: 8rpx 0; }

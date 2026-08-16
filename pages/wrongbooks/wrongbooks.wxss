@@ -1,0 +1,27 @@
+.page { padding-bottom: 60rpx; }
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 24rpx 24rpx 8rpx;
+}
+.topbar-title { font-size: 34rpx; font-weight: 800; }
+.topbar-btn { font-size: 26rpx; line-height: 2.2; padding: 0 28rpx; }
+
+.rule-card {
+  margin: 8rpx 24rpx;
+  background: #FFFBEB;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  font-size: 24rpx;
+  color: #92400E;
+  line-height: 1.7;
+}
+.rule-card .hl { color: #B45309; font-weight: 800; }
+.rule-card .link { color: #6C5CE7; margin-left: 8rpx; font-weight: 600; }
+
+.book-card { margin-top: 16rpx; }
+.book-name { font-size: 32rpx; font-weight: 700; }
+.book-op { font-size: 24rpx; color: #6C5CE7; padding: 4rpx 12rpx; }
+.book-op.danger { color: #EF4444; }
+.book-go { color: #6C5CE7; font-weight: 600; font-size: 26rpx; }

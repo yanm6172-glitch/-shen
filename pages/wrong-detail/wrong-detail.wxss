@@ -1,0 +1,16 @@
+.page { padding-bottom: 160rpx; }
+.head-card .book-name { font-size: 36rpx; font-weight: 800; }
+.clear-btn { font-size: 24rpx; color: #EF4444; padding: 6rpx 16rpx; }
+
+.item-card { margin-top: 16rpx; }
+.item-stem { font-size: 26rpx; line-height: 1.6; margin-left: 12rpx; }
+.remove-btn { font-size: 24rpx; color: #EF4444; padding: 4rpx 12rpx; }
+.streak-text { font-size: 22rpx; color: #10B981; margin-right: 12rpx; flex-shrink: 0; }
+
+.bottom-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 20rpx 24rpx calc(20rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  box-shadow: 0 -6rpx 24rpx rgba(35, 38, 47, 0.06);
+}

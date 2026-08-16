@@ -1,0 +1,28 @@
+<view class="page">
+  <view class="topbar">
+    <view class="topbar-title">背书内容（{{memos.length}}）</view>
+    <button class="btn btn-primary topbar-btn" bindtap="goImport">＋ 导入内容</button>
+  </view>
+
+  <block wx:if="{{memos.length}}">
+    <view class="card memo-card" wx:for="{{memos}}" wx:key="id" bindtap="goMemo" data-id="{{item.id}}">
+      <view class="row space-between">
+        <view class="memo-name">📖 {{item.name}}</view>
+        <view class="memo-del" catchtap="deleteMemo" data-id="{{item.id}}" data-name="{{item.name}}">删除</view>
+      </view>
+      <view class="row space-between mt8">
+        <text class="text-2">{{item.sections}} 个章节 · {{item.dateStr}}</text>
+        <text class="memo-go">开始背书 ›</text>
+      </view>
+    </view>
+  </block>
+
+  <view wx:else class="empty">
+    <view class="empty-icon">🧠</view>
+    <view>还没有背书内容</view>
+    <view class="text-3 mt8">粘贴课文/笔记/知识点，AI 陪你背</view>
+    <view class="mt16">
+      <button class="btn btn-primary" bindtap="goImport">去导入</button>
+    </view>
+  </view>
+</view>

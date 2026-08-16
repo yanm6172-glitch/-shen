@@ -1,0 +1,81 @@
+<view class="page">
+  <!-- 头部 -->
+  <view class="hero">
+    <view class="hero-title">背书刷题神器</view>
+    <view class="hero-sub">任意文本一键导入 · 五种题型全识别 · AI 交互背书</view>
+  </view>
+
+  <!-- 继续上次 -->
+  <view wx:if="{{hasSession}}" class="resume card" bindtap="resumeSession">
+    <view class="resume-icon">▶</view>
+    <view class="flex1">
+      <view class="resume-title">继续上次刷题</view>
+      <view class="text-2 resume-sub">{{sessionTitle}}</view>
+    </view>
+    <view class="text-3">›</view>
+  </view>
+
+  <!-- 统计 -->
+  <view class="card stats-card">
+    <view class="stat">
+      <view class="stat-num">{{stats.answered}}</view>
+      <view class="stat-label">累计答题</view>
+    </view>
+    <view class="stat">
+      <view class="stat-num green">{{stats.correct}}</view>
+      <view class="stat-label">答对</view>
+    </view>
+    <view class="stat">
+      <view class="stat-num">{{bankCount}}</view>
+      <view class="stat-label">题库</view>
+    </view>
+    <view class="stat">
+      <view class="stat-num">{{wrongTotal}}</view>
+      <view class="stat-label">错题</view>
+    </view>
+  </view>
+
+  <!-- 两大入口 -->
+  <view class="entry-row">
+    <view class="entry entry-quiz" bindtap="goQuiz">
+      <view class="entry-icon">✍</view>
+      <view class="entry-title">刷 题</view>
+      <view class="entry-desc">单选·多选·判断·填空·解答
+乱序选项·乱序题目</view>
+    </view>
+    <view class="entry entry-memo" bindtap="goMemo">
+      <view class="entry-icon">📖</view>
+      <view class="entry-title">背 书</view>
+      <view class="entry-desc">任意文本导入
+AI 交互背书</view>
+    </view>
+  </view>
+
+  <!-- 快捷操作 -->
+  <view class="quick card">
+    <view class="quick-item" bindtap="goImport" data-mode="quiz">
+      <view class="quick-icon" style="background:#EAF1FE;color:#4A7CF7;">📥</view>
+      <view class="flex1">
+        <view class="quick-title">导入刷题文本</view>
+        <view class="quick-desc text-2">粘贴 / 选择文件，任意格式自动识别</view>
+      </view>
+      <view class="text-3">›</view>
+    </view>
+    <view class="quick-item" bindtap="goImport" data-mode="memo">
+      <view class="quick-icon" style="background:#E4F8F5;color:#14B8A6;">🧠</view>
+      <view class="flex1">
+        <view class="quick-title">导入背书内容</view>
+        <view class="quick-desc text-2">背诵材料一键导入，AI 陪你背</view>
+      </view>
+      <view class="text-3">›</view>
+    </view>
+    <view class="quick-item" bindtap="goWrong">
+      <view class="quick-icon" style="background:#FDECEC;color:#EF4444;">📕</view>
+      <view class="flex1">
+        <view class="quick-title">错题本</view>
+        <view class="quick-desc text-2">多错题集管理 · 做对 N 遍自动移除</view>
+      </view>
+      <view class="text-3">›</view>
+    </view>
+  </view>
+</view>

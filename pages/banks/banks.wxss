@@ -1,0 +1,16 @@
+.page { padding-bottom: 60rpx; }
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 24rpx 24rpx 8rpx;
+}
+.topbar-title { font-size: 34rpx; font-weight: 800; }
+.topbar-btn { font-size: 26rpx; line-height: 2.2; padding: 0 28rpx; }
+
+.bank-card { margin-top: 16rpx; }
+.bank-name { font-size: 32rpx; font-weight: 700; }
+.bank-del { font-size: 24rpx; color: #EF4444; padding: 4rpx 12rpx; }
+.bank-card .badge { margin-right: 8rpx; margin-top: 8rpx; }
+.bank-go { color: #6C5CE7; font-weight: 600; }

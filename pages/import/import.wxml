@@ -1,0 +1,109 @@
+<view class="page">
+  <!-- 模式切换 -->
+  <view class="mode-tabs">
+    <view class="mode-tab {{mode==='quiz'?'active':''}}" bindtap="switchMode" data-mode="quiz">导入刷题文本</view>
+    <view class="mode-tab {{mode==='memo'?'active':''}}" bindtap="switchMode" data-mode="memo">导入背书内容</view>
+  </view>
+
+  <view class="card">
+    <view class="row space-between mb16">
+      <view class="hint-title">输入内容</view>
+      <view class="text-3 hint-sub">支持任何文本格式 / docx</view>
+    </view>
+    <textarea
+      class="input-area"
+      value="{{text}}"
+      bindinput="onInput"
+      placeholder="{{mode==='quiz' ? '在这里粘贴题目文本，例如：(单选题, 2.0 分) 题目( ) A. xx B. xx 答案：A，具体支持格式见下方提示' : '在这里粘贴要背的内容，例如：# 标题 段落内容，或 问：xxx 答：xxx'}}"
+      maxlength="-1"
+    ></textarea>
+    <view wx:if="{{mode==='quiz'}}" class="tip-card">
+      <view class="tip-title">💡 刷题导入格式提示</view>
+      <view class="tip-line">· 考试系统导出：题目( ) + 选项(A. B. C.) + 答案：X（学习通/豆包等）</view>
+      <view class="tip-line">· 普通文本：1.【单选】题目 / A. xx B. xx / 答案：B</view>
+      <view class="tip-line">· 判断题：题目 + 答案：对/错；填空题：题目____ + 答案：xxx（多空可用 (1) (2)）</view>
+      <view class="tip-line">· 解答题：题目 + 答案：xxx；也支持 Markdown、带题号文本、docx 文件</view>
+    </view>
+    <view class="row mt16">
+      <button class="btn btn-ghost mini" bindtap="chooseFile">📎 从微信文件导入</button>
+      <button class="btn btn-ghost mini" bindtap="loadBuiltin">⭐ 填充示例</button>
+      <button class="btn btn-danger mini" bindtap="clearText">清空</button>
+    </view>
+    <button class="btn btn-primary btn-block mt16" bindtap="parseNow">识别预览</button>
+  </view>
+
+  <!-- 预览结果 -->
+  <block wx:if="{{parsed}}">
+  <block wx:if="{{mode==='quiz'}}">
+    <view class="preview-head">
+      <view class="preview-title">识别结果：共 {{stats.total}} 题</view>
+      <view class="row">
+        <text class="badge badge-single">单选 {{stats.single}}</text>
+        <text class="badge badge-multi">多选 {{stats.multi}}</text>
+        <text class="badge badge-judge">判断 {{stats.judge}}</text>
+        <text class="badge badge-fill">填空 {{stats.fill}}</text>
+        <text class="badge badge-short">解答 {{stats.short}}</text>
+      </view>
+    </view>
+
+    <view wx:if="{{warnings.length}}" class="card warn-card">
+      <view class="warn-title">⚠ 提示 {{warnings.length}} 条</view>
+      <view wx:for="{{warnings}}" wx:key="no" class="warn-item">{{item.no}}.{{item.text}}：{{item.stem}}…</view>
+    </view>
+
+    <view class="card">
+      <view class="field-label">题库名称</view>
+      <input class="name-input" value="{{name}}" bindinput="onNameInput" placeholder="给这个题库起个名字" />
+    </view>
+
+    <view class="card">
+      <view class="row space-between mb16">
+        <view class="field-label">题目列表（点 ✕ 可删除识别错的题）</view>
+        <text class="text-3">剩余 {{stats.total}}</text>
+      </view>
+      <view wx:for="{{questions}}" wx:key="id" class="q-item">
+        <view class="badge badge-{{item.type}}">{{item.type==='single'?'单选':item.type==='multi'?'多选':item.type==='judge'?'判断':item.type==='fill'?'填空':'解答'}}</view>
+        <view class="q-stem">{{item.stemShort}}</view>
+        <view class="q-del" bindtap="removeQuestion" data-idx="{{index}}">✕</view>
+      </view>
+    </view>
+
+    <view class="bottom-bar">
+      <button class="btn btn-primary btn-block" bindtap="save" disabled="{{saving}}">保存题库（{{stats.total}} 题）</button>
+    </view>
+  </block>
+
+  <block wx:if="{{mode==='memo'}}">
+    <view class="preview-head">
+      <view class="preview-title">识别结果：{{stats.sections}} 个章节 · {{stats.qa}} 组问答</view>
+    </view>
+    <view class="card">
+      <view class="field-label">内容名称</view>
+      <input class="name-input" value="{{name}}" bindinput="onNameInput" placeholder="给这段内容起个名字" />
+    </view>
+    <view class="card">
+      <view wx:for="{{sections}}" wx:key="*this" class="sec-item">
+        <view class="sec-title">{{item.title}}</view>
+        <view wx:if="{{item.lines.length}}" class="sec-line" wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this">· {{line}}</view>
+        <view wx:if="{{item.qa}}" class="sec-qa" wx:for="{{item.qa}}" wx:for-item="qa" wx:key="*this">
+          <view class="qa-q">问：{{qa.q}}</view>
+          <view class="qa-a">答：{{qa.a}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="bottom-bar">
+      <button class="btn btn-primary btn-block" bindtap="save" disabled="{{saving}}">保存背书内容</button>
+    </view>
+  </block>
+  </block>
+
+  <block wx:if="{{mode==='memo'}}">
+    <view wx:if="{{!parsed}}" class="card tip-card">
+      <view class="tip-title">💡 背书导入提示</view>
+      <view class="tip-line">· 直接粘贴课文、知识点、笔记即可，会自动分段</view>
+      <view class="tip-line">· 用「# 标题」分章节，用「1. 2. 3.」列要点</view>
+      <view class="tip-line">· 用「问：xxx / 答：xxx」生成问答卡</view>
+      <view class="tip-line">· 导入后可 AI 交互背书：AI 出题考你、AI 挖空、自由提问</view>
+    </view>
+  </block>
+</view>

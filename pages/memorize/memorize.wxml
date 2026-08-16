@@ -1,0 +1,103 @@
+<view class="page" wx:if="{{memo}}">
+  <!-- 模式切换 -->
+  <view class="mode-tabs">
+    <view class="mode-tab {{mode==='browse'?'active':''}}" bindtap="switchMode" data-mode="browse">浏览</view>
+    <view class="mode-tab {{mode==='cloze'?'active':''}}" bindtap="switchMode" data-mode="cloze">挖空自测</view>
+    <view class="mode-tab {{mode==='ai'?'active':''}}" bindtap="switchMode" data-mode="ai">AI 互动背书</view>
+  </view>
+
+  <!-- 浏览模式 -->
+  <block wx:if="{{mode==='browse'}}">
+    <view class="card sec-card" wx:for="{{sections}}" wx:key="*this">
+      <view class="sec-title">{{item.title}}</view>
+      <view class="sec-line" wx:for="{{item.lines}}" wx:for-item="line" wx:key="*this">{{line}}</view>
+      <view wx:if="{{item.qa.length}}" class="qa-list">
+        <view class="qa-card" wx:for="{{item.qa}}" wx:for-item="qa" wx:for-index="qi" wx:key="*this" bindtap="flipQA" data-key="{{index}}-{{qi}}">
+          <view class="qa-q">❓ {{qa.q}}</view>
+          <view wx:if="{{flipped[index + '-' + qi]}}" class="qa-a">💡 {{qa.a}}</view>
+          <view wx:else class="qa-tip">点击显示答案</view>
+        </view>
+      </view>
+    </view>
+    <view class="tip-line">💡 提示：切到「挖空自测」检查背诵，「AI 互动背书」让 AI 考你</view>
+  </block>
+
+  <!-- 挖空自测 -->
+  <block wx:if="{{mode==='cloze'}}">
+    <view class="cloze-head">
+      <text wx:if="{{clozeChecked}}" class="cloze-score">{{clozeScore}}</text>
+      <text wx:else class="text-2">把关键内容挖掉了，试试填出来</text>
+    </view>
+    <view wx:if="{{clozeItems.length === 0}}" class="empty">
+      <view class="empty-icon">📝</view>
+      <view>内容太短，暂时挖不出空</view>
+      <view class="text-3 mt8">可以试试更长一些的内容</view>
+    </view>
+    <view class="card cloze-card" wx:for="{{clozeItems}}" wx:key="*this">
+      <view wx:if="{{item.hint}}" class="cloze-hint">📎 {{item.hint}}</view>
+      <view class="cloze-sentence">
+        <text>{{item.before}}</text>
+        <text class="cloze-blank cloze-{{item.state}}">
+          {{item.state === 'pending' ? item.underscores : (item.input || '（空）')}}
+        </text>
+        <text>{{item.after}}</text>
+      </view>
+      <view wx:if="{{clozeChecked}}" class="cloze-ans {{item.state==='ok'?'ok':'bad'}}">
+        {{item.state === 'ok' ? '✓ 填对了' : '✗ 正确答案：' + item.answer}}
+      </view>
+      <view wx:else class="cloze-input-row">
+        <view class="cloze-len-tag">{{item.blankLen}}字</view>
+        <input
+          class="cloze-input"
+          value="{{item.input}}"
+          bindinput="clozeInput"
+          data-idx="{{index}}"
+          placeholder="填写{{item.blankLen}}个字的答案"
+          placeholder-class="cloze-ph"
+        />
+      </view>
+    </view>
+    <view wx:if="{{clozeItems.length}}" class="bottom-bar">
+      <button wx:if="{{!clozeChecked}}" class="btn btn-primary flex1" bindtap="checkCloze">检查答案</button>
+      <button wx:else class="btn btn-primary flex1" bindtap="resetCloze">重新挖空</button>
+    </view>
+  </block>
+
+  <!-- AI 互动 -->
+  <block wx:if="{{mode==='ai'}}">
+    <view class="ai-mode-row">
+      <view class="ai-chip {{aiMode==='quiz'?'on':''}}" bindtap="switchAiMode" data-mode="quiz">AI 考我</view>
+      <view class="ai-chip {{aiMode==='cloze'?'on':''}}" bindtap="switchAiMode" data-mode="cloze">AI 挖空</view>
+      <view class="ai-chip {{aiMode==='ask'?'on':''}}" bindtap="switchAiMode" data-mode="ask">自由提问</view>
+      <view class="ai-reset" bindtap="resetAi">↻ 重来</view>
+    </view>
+
+    <scroll-view class="chat-area" scroll-y scroll-into-view="{{scrollTo}}" scroll-with-animation>
+      <view class="chat-msg" wx:for="{{messages}}" wx:key="*this">
+        <view class="msg-row {{item.role==='user' ? 'msg-user' : 'msg-ai'}}">
+          <view class="msg-avatar">{{item.role==='user' ? '我' : 'AI'}}</view>
+          <view class="msg-bubble {{item.role==='user' ? 'bubble-user' : 'bubble-ai'}}">
+            <text user-select>{{item.content}}</text>
+          </view>
+        </view>
+      </view>
+      <view wx:if="{{aiLoading}}" class="msg-row msg-ai">
+        <view class="msg-avatar">AI</view>
+        <view class="msg-bubble bubble-ai typing">正在思考…</view>
+      </view>
+      <view id="msg-end" style="height: 4rpx;"></view>
+    </scroll-view>
+
+    <view class="chat-bar">
+      <input
+        class="chat-input"
+        value="{{input}}"
+        bindinput="aiInput"
+        bindconfirm="sendAi"
+        placeholder="输入你的回答/问题…"
+        confirm-type="send"
+      />
+      <button class="btn btn-primary chat-send" bindtap="sendAi" disabled="{{aiLoading}}">发送</button>
+    </view>
+  </block>
+</view>

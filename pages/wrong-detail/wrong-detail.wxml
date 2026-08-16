@@ -1,0 +1,41 @@
+<view class="page" wx:if="{{book}}">
+  <view class="card head-card">
+    <view class="row space-between">
+      <view class="book-name">{{book.name}}</view>
+      <view class="clear-btn" bindtap="clearAll">清空</view>
+    </view>
+    <view class="text-2 mt8">共 {{items.length}} 题 · 做对 {{removeAfter === 0 ? '∞' : removeAfter}} 遍自动移除</view>
+  </view>
+
+  <block wx:if="{{items.length}}">
+    <view class="card item-card" wx:for="{{items}}" wx:key="qid">
+      <view class="row">
+        <view class="badge badge-{{item.type}}">{{item.typeName}}</view>
+        <view class="item-stem flex1">{{item.stem}}</view>
+      </view>
+      <view class="row space-between mt8">
+        <view class="text-3">{{item.bankName}} · 做错 {{item.wrongCount}} 次</view>
+        <view class="remove-btn" catchtap="removeOne" data-qid="{{item.qid}}">移出</view>
+      </view>
+      <view class="row mt8" wx:if="{{removeAfter !== 0}}">
+        <text class="streak-text">连续做对 {{item.streak}} / {{removeAfter}}</text>
+        <view class="progress-bar flex1">
+          <view class="progress-fill" style="width: {{item.progress}}%"></view>
+        </view>
+      </view>
+    </view>
+
+    <view class="bottom-bar">
+      <button class="btn btn-primary btn-block" bindtap="startPractice">刷错题（{{items.length}} 题）</button>
+    </view>
+  </block>
+
+  <view wx:else class="empty">
+    <view class="empty-icon">🎉</view>
+    <view>错题集空啦，继续保持！</view>
+    <view class="text-3 mt8">去题库刷题，答错的题会回到这里</view>
+    <view class="mt16">
+      <button class="btn btn-primary" bindtap="goBanks">去刷题</button>
+    </view>
+  </view>
+</view>

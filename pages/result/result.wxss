@@ -1,0 +1,45 @@
+.page { padding-bottom: 180rpx; }
+
+.score-card {
+  margin: 24rpx;
+  background: linear-gradient(135deg, #6C5CE7, #8E7CFF);
+  border-radius: 28rpx;
+  color: #fff;
+  text-align: center;
+  padding: 48rpx 32rpx;
+  box-shadow: 0 10rpx 28rpx rgba(108, 92, 231, 0.3);
+}
+.score-num { font-size: 96rpx; font-weight: 800; line-height: 1.1; }
+.score-label { font-size: 26rpx; opacity: 0.85; }
+.score-detail { font-size: 24rpx; opacity: 0.9; margin-top: 16rpx; }
+.score-title { font-size: 28rpx; font-weight: 700; margin-top: 12rpx; }
+
+.field-label { font-weight: 700; margin-bottom: 16rpx; }
+.type-row { display: flex; align-items: center; gap: 16rpx; margin: 14rpx 0; }
+.type-row .badge { width: 90rpx; justify-content: center; }
+
+.review-card { margin-top: 16rpx; }
+.rev-icon {
+  width: 40rpx; height: 40rpx; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24rpx; font-weight: 800; flex-shrink: 0;
+}
+.rev-ok { background: #E7F8F1; color: #10B981; }
+.rev-bad { background: #FDECEC; color: #EF4444; }
+.rev-mid { background: #EAF1FE; color: #4A7CF7; }
+.rev-stem { font-size: 26rpx; line-height: 1.6; margin-left: 8rpx; }
+.rev-line { font-size: 24rpx; color: #6B7080; margin: 6rpx 0; }
+.rev-user { color: #EF4444; }
+.rev-ans { color: #10B981; }
+.rev-analysis { color: #6C5CE7; }
+
+.bottom-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 20rpx 24rpx calc(20rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  box-shadow: 0 -6rpx 24rpx rgba(35, 38, 47, 0.06);
+  display: flex;
+  gap: 20rpx;
+}
+.flex1 { flex: 1; }

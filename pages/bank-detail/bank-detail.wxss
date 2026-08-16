@@ -1,0 +1,22 @@
+.page { padding-bottom: 160rpx; }
+.head-card .bank-name { font-size: 36rpx; font-weight: 800; }
+.head-card .badge { margin-right: 8rpx; margin-top: 8rpx; }
+
+.q-card { margin-top: 16rpx; }
+.q-stem { font-size: 28rpx; line-height: 1.6; margin-left: 12rpx; }
+.q-card .badge { flex-shrink: 0; margin-top: 4rpx; }
+
+.opt-line { font-size: 26rpx; color: #6B7080; margin: 8rpx 0; }
+.ans-line { font-size: 26rpx; color: #10B981; margin: 8rpx 0; }
+.ans-line.analysis { color: #6C5CE7; }
+
+.bottom-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 20rpx 24rpx calc(20rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  box-shadow: 0 -6rpx 24rpx rgba(35, 38, 47, 0.06);
+  display: flex;
+  gap: 20rpx;
+}
+.half { flex: 1; }
