@@ -23,7 +23,9 @@ Page({
     quickBankName: '',
     canQuick: false,
     achievements: [],
-    achGot: 0
+    achGot: 0,
+    report: null,
+    reportTrendIcon: ''
   },
   onShow() {
     const stats = store.getStats();
@@ -38,6 +40,8 @@ Page({
     let quickBank = banks.find(b => b.id === settings.lastBankId);
     if (!quickBank) quickBank = banks[0];
     const weekTotal = ds.week.reduce((n, w) => n + w.answered, 0);
+    const report = store.getWeeklyReport();
+    const trendIcon = { up: '📈', down: '📉', flat: '➡️', new: '🆕' }[report.trend] || '';
     this.setData({
       stats,
       bankCount: banks.length,
@@ -57,7 +61,9 @@ Page({
       quickBankName: quickBank ? quickBank.name : '',
       canQuick: !!quickBank,
       achievements: store.getAchievements(),
-      achGot: store.getAchievements().filter(a => a.got).length
+      achGot: store.getAchievements().filter(a => a.got).length,
+      report,
+      reportTrendIcon: trendIcon
     });
   },
   quickStart() {

@@ -60,6 +60,15 @@
     </view>
   </view>
 
+  <!-- 每周学习报告 -->
+  <view class="report-card" wx:if="{{report.answered > 0}}">
+    <view class="report-icon">{{reportTrendIcon}}</view>
+    <view class="flex1">
+      <view class="report-title">本周学习报告</view>
+      <view class="report-sub">刷题 {{report.answered}} 题 · 正确率 {{report.rate}}% · {{report.trend === 'up' ? '比上周多 ' + report.delta + ' 题' : (report.trend === 'down' ? '比上周少 ' + report.delta + ' 题' : (report.trend === 'new' ? '上周还没有记录' : '与上周持平'))}}</view>
+    </view>
+  </view>
+
   <!-- 统计 -->
   <view class="stat-row">
     <view class="stat-item">

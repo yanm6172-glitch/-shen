@@ -372,6 +372,32 @@ function clearAllData() {
   set(KEYS.settings, getSettings());
 }
 
+/* ---------------- 每周学习报告 ---------------- */
+
+// 返回 {answered, rate, delta, trend, prevAnswered}：本周(近7天) vs 上周(再往前7天)
+function getWeeklyReport() {
+  const daily = get(KEYS.daily, {});
+  const sum = (offsetDays, len) => {
+    let answered = 0, correct = 0;
+    for (let i = 0; i < len; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - offsetDays - i);
+      const rec = daily[keyOf(d)];
+      if (rec) { answered += rec.answered || 0; correct += rec.correct || 0; }
+    }
+    return { answered, correct };
+  };
+  const cur = sum(0, 7);
+  const prev = sum(7, 7);
+  const rate = cur.answered ? Math.round(cur.correct / cur.answered * 100) : 0;
+  const delta = cur.answered - prev.answered;
+  let trend = 'flat';
+  if (prev.answered === 0 && delta > 0) trend = 'new';
+  else if (delta > 0) trend = 'up';
+  else if (delta < 0) trend = 'down';
+  return { answered: cur.answered, rate, delta: Math.abs(delta), trend, prevAnswered: prev.answered };
+}
+
 /* ---------------- 成就系统 ---------------- */
 
 // 返回徽章列表（实时根据数据计算）
@@ -471,6 +497,7 @@ module.exports = {
   getFavorites, toggleFavorite,
   getQStats, recordQuestionResult,
   getAchievements, exportAllData, importAllData,
+  getWeeklyReport,
   saveSession, loadSession, clearSession,
   ensureBuiltinImported, clearAllData
 };

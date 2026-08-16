@@ -6,6 +6,7 @@
       <view class="topbar-count">{{index + 1}} / {{total}} · {{examMode ? '已答 ' + examAnswered : '已对 ' + correctCount}}</view>
     </view>
     <view class="row">
+      <view wx:if="{{challengeMode}}" class="challenge-clock {{5 >= challengeLeft ? 'danger' : ''}}">⏰ {{challengeLeft}}s</view>
       <view wx:if="{{examMode}}" class="exam-clock">⏱ {{examClock}}</view>
       <view class="exit-btn" bindtap="exit">退出</view>
     </view>

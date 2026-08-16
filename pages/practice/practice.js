@@ -34,6 +34,9 @@ Page({
     examSkip: 0,
     isExamAnswered: false,
     isExamLast: false,
+    // 挑战模式
+    challengeMode: false,
+    challengeLeft: 15,
     // AI 讲解
     aiExplainLoading: false,
     aiExplainText: ''
@@ -60,9 +63,11 @@ Page({
   },
   onHide() {
     this.stopClock();
+    this.stopChallenge();
   },
   onUnload() {
     this.stopClock();
+    this.stopChallenge();
     if (this.autoNextTimer) clearTimeout(this.autoNextTimer);
   },
   /* ---------- 考试模式计时 ---------- */
@@ -80,6 +85,29 @@ Page({
     const mm = Math.floor(sec / 60);
     const ss = sec % 60;
     this.setData({ examClock: (mm < 10 ? '0' + mm : mm) + ':' + (ss < 10 ? '0' + ss : ss) });
+  },
+  /* ---------- 挑战模式倒计时 ---------- */
+  startChallenge() {
+    this.stopChallenge();
+    const sec = this.session.challengeSec || 15;
+    this.setData({ challengeLeft: sec });
+    this.challengeTimer = setInterval(() => {
+      const left = this.data.challengeLeft - 1;
+      if (left <= 0) {
+        this.stopChallenge();
+        this.setData({ challengeLeft: 0 });
+        if (this.data.phase === 'answer') {
+          // 超时判错
+          this.finishGrade({ correct: false, detail: { timeout: true, manual: true, grade: 'wrong' } }, null);
+          this.setData({ wrongActionMsg: '⏰ 超时未作答，本题判错' });
+        }
+        return;
+      }
+      this.setData({ challengeLeft: left });
+    }, 1000);
+  },
+  stopChallenge() {
+    if (this.challengeTimer) { clearInterval(this.challengeTimer); this.challengeTimer = null; }
   },
   /* ---------- 渲染当前题 ---------- */
   renderCurrent() {
@@ -105,6 +133,7 @@ Page({
       } else if (dq.type === 'short' && ua) shortText = ua.text || '';
     }
     const examAnswered = isExam ? Object.keys(this.examAnswers).length : 0;
+    const isChallenge = !!s.challengeMode && !isExam;
 
     this.setData({
       title: s.title,
@@ -133,9 +162,12 @@ Page({
       examSkip: isExam ? Math.max(0, s.questions.length - examAnswered) : 0,
       isExamAnswered: isExam && this.examAnswers[s.index] !== undefined,
       isExamLast: isExam && s.index === s.questions.length - 1,
+      challengeMode: isChallenge,
+      challengeLeft: s.challengeSec || 15,
       aiExplainLoading: false,
       aiExplainText: ''
     });
+    if (isChallenge) this.startChallenge();
   },
   answerTextOf(dq) {
     const a = dq.answer || {};
@@ -366,6 +398,7 @@ Page({
     this.finishGrade(g, userAnswer);
   },
   finishGrade(g, userAnswer) {
+    this.stopChallenge();
     const dq = this.data.dq;
     const { result, wrongAction } = practice.recordAnswer(this.session, dq, g, userAnswer);
     store.saveSession(this.session);

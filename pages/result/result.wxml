@@ -68,7 +68,11 @@
   </view>
 
   <view class="bottom-bar">
+    <button class="btn btn-ghost flex1" bindtap="drawShare">📸 成绩单</button>
     <button class="btn btn-plain flex1" bindtap="again">再来一组</button>
     <button class="btn btn-primary flex1" bindtap="{{summary.mode==='wrongbook' ? 'backWrong' : 'backHome'}}">完成</button>
   </view>
+
+  <!-- 成绩单画布（离屏） -->
+  <canvas canvas-id="shareCanvas" class="share-canvas"></canvas>
 </view>

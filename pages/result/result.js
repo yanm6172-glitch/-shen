@@ -114,6 +114,66 @@ Page({
   backHome() {
     wx.switchTab({ url: '/pages/index/index' });
   },
+  // 生成成绩单图片（canvas）保存到相册
+  drawShare() {
+    const s = this.data.summary;
+    if (!s) return;
+    const W = 300, H = 430;
+    const ctx = wx.createCanvasContext('shareCanvas', this);
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#6C5CE7');
+    bg.addColorStop(0.55, '#8E7CFF');
+    bg.addColorStop(1, '#A99BFF');
+    ctx.setFillStyle(bg);
+    ctx.fillRect(0, 0, W, H);
+    ctx.setFillStyle('rgba(255,255,255,0.16)');
+    ctx.fillRect(20, 78, W - 40, 300);
+    ctx.setTextAlign('center');
+    ctx.setFillStyle('#FFFFFF');
+    ctx.setFontSize(19);
+    ctx.fillText('背书刷题神器 · 成绩单', W / 2, 38);
+    ctx.setFontSize(12);
+    ctx.setFillStyle('rgba(255,255,255,0.9)');
+    ctx.fillText((s.title || '') + ' · ' + (s.mode === 'wrongbook' ? '错题集' : '刷题'), W / 2, 58);
+    ctx.setFillStyle('#FFFFFF');
+    ctx.setFontSize(62);
+    ctx.fillText(String(s.score), W / 2, 165);
+    ctx.setFontSize(14);
+    ctx.setFillStyle('rgba(255,255,255,0.9)');
+    ctx.fillText('得 分', W / 2, 190);
+    const lines = [
+      '共 ' + s.total + ' 题 · 答对 ' + s.correct + ' · 答错 ' + s.wrong,
+      s.unjudged ? '解答题提交 ' + s.unjudged + ' 题' : '',
+      s.durText ? '用时 ' + s.durText : ''
+    ].filter(x => x);
+    ctx.setFontSize(13);
+    let y = 235;
+    lines.forEach(l => { ctx.fillText(l, W / 2, y); y += 26; });
+    ctx.setFillStyle('#FFFFFF');
+    ctx.setFontSize(15);
+    ctx.fillText(s.comment || '', W / 2, y + 8);
+    const d = new Date();
+    ctx.setFontSize(11);
+    ctx.setFillStyle('rgba(255,255,255,0.85)');
+    ctx.fillText(d.getFullYear() + ' 年 ' + (d.getMonth() + 1) + ' 月 ' + d.getDate() + ' 日 · 背书刷题神器', W / 2, H - 22);
+    ctx.draw(false, () => {
+      wx.canvasToTempFilePath({
+        canvasId: 'shareCanvas',
+        success: res => {
+          wx.saveImageToPhotosAlbum({
+            filePath: res.tempFilePath,
+            success: () => wx.showToast({ title: '成绩单已保存到相册', icon: 'success' }),
+            fail: () => wx.showModal({
+              title: '保存失败',
+              content: '请在设置中允许小程序保存图片到相册，或直接截图分享',
+              showCancel: false
+            })
+          });
+        },
+        fail: () => wx.showToast({ title: '生成失败，请重试', icon: 'none' })
+      }, this);
+    });
+  },
   backWrong() {
     wx.switchTab({ url: '/pages/wrongbooks/wrongbooks' });
   }

@@ -12,6 +12,7 @@ Page({
     autoNext: false,
     examMode: false,
     smartMode: false,
+    challengeMode: false,
     wrongBooks: [],
     targetIndex: 0,          // 0 = 不加入错题集
     removeAfter: 3
@@ -63,9 +64,14 @@ Page({
   },
   toggleExamMode(e) {
     this.setData({ examMode: e.detail.value });
+    if (e.detail.value) this.setData({ challengeMode: false }); // 与挑战模式互斥
   },
   toggleSmartMode(e) {
     this.setData({ smartMode: e.detail.value });
+  },
+  toggleChallengeMode(e) {
+    this.setData({ challengeMode: e.detail.value });
+    if (e.detail.value) this.setData({ examMode: false }); // 与考试模式互斥
   },
   createWrongBook() {
     wx.showModal({
@@ -103,8 +109,10 @@ Page({
         shuffleOptions: this.data.shuffleOptions,
         wrongBookTargetId: targetId,
         removeAfter: this.data.removeAfter,
-        examMode: this.data.examMode,
-        smartMode: this.data.smartMode
+        examMode: this.data.examMode && !this.data.challengeMode,
+        smartMode: this.data.smartMode,
+        challengeMode: this.data.challengeMode,
+        challengeSec: 15
       });
       session.autoNext = this.data.autoNext;   // 答对自动跳下一题（可自行选择）
       store.saveSettings({ lastBankId: this.bankId });   // 首页"快速开始"记住最近题库
@@ -115,8 +123,9 @@ Page({
         shuffleQuestions: this.data.shuffleQuestions,
         shuffleOptions: this.data.shuffleOptions,
         wrongBookTargetId: targetId,
-        examMode: this.data.examMode,
-        smartMode: this.data.smartMode
+        examMode: this.data.examMode && !this.data.challengeMode,
+        smartMode: this.data.smartMode,
+        challengeMode: this.data.challengeMode
       };
       store.saveSession(session);
       wx.navigateTo({ url: '/pages/practice/practice' });

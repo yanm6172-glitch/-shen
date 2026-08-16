@@ -61,6 +61,14 @@
       </view>
       <switch checked="{{examMode}}" bindchange="toggleExamMode" color="#FF9F43" />
     </view>
+    <view class="divider"></view>
+    <view class="row space-between">
+      <view>
+        <view class="field-label">挑战模式</view>
+        <view class="text-3">每题限时 15 秒，超时自动判错（与考试模式互斥）</view>
+      </view>
+      <switch checked="{{challengeMode}}" bindchange="toggleChallengeMode" color="#EF4444" />
+    </view>
   </view>
 
   <view class="card">

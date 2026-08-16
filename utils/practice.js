@@ -159,6 +159,8 @@ function buildSession(opts) {
     shuffleOptions,
     shuffleQuestions,
     examMode: !!opts.examMode,
+    challengeMode: !!opts.challengeMode,
+    challengeSec: opts.challengeSec || 15,
     durationSec: 0,
     questions: displayQuestions,
     index: 0,

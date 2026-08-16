@@ -64,3 +64,12 @@
   gap: 20rpx;
 }
 .flex1 { flex: 1; }
+
+/* 离屏成绩单画布 */
+.share-canvas {
+  position: fixed;
+  left: -2000px;
+  top: 0;
+  width: 300px;
+  height: 430px;
+}
