@@ -135,6 +135,16 @@ function deleteMemo(id) {
   set(KEYS.memos, getMemos().filter(m => m.id !== id));
   remove(KEYS.memo + id);
 }
+// 标记今日已背（记忆曲线复习提醒用）
+function markMemoReviewed(id) {
+  const memos = getMemos();
+  const m = memos.find(x => x.id === id);
+  if (m) {
+    m.reviewedAt = Date.now();
+    set(KEYS.memos, memos);
+  }
+  return m;
+}
 
 /* ---------------- 错题集 ---------------- */
 
@@ -382,7 +392,7 @@ module.exports = {
   KEYS,
   getSettings, saveSettings,
   getBanks, getBank, saveBank, deleteBank, buildBank,
-  getMemos, getMemo, saveMemo, deleteMemo,
+  getMemos, getMemo, saveMemo, deleteMemo, markMemoReviewed,
   getWrongBooks, createWrongBook, renameWrongBook, deleteWrongBook,
   getWrongData, getWrongItems, addWrongItem, removeWrongItem,
   recordWrongResult, makeWrongItem,

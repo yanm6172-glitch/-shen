@@ -20,13 +20,21 @@ function pickWord(sentence) {
 Page({
   data: {
     memo: null,
-    mode: 'browse',           // browse | cloze | ai
+    mode: 'browse',           // browse | cloze | cards | ai
     sections: [],
     flipped: {},
+    reviewedText: '',
     // 挖空
     clozeItems: [],
     clozeChecked: false,
     clozeScore: '',
+    // 闪卡
+    cardCur: null,
+    cardFlipped: false,
+    cardLeft: 0,
+    cardsDone: 0,
+    cardsEmpty: false,
+    cardDone: false,
     // AI
     aiMode: 'quiz',
     messages: [],
@@ -49,7 +57,13 @@ Page({
       lines: s.lines || [],
       qa: s.qa || []
     }));
-    this.setData({ memo: { id: memo.id, name: memo.name }, sections, flipped: {} });
+    const meta = store.getMemos().find(m => m.id === this.memoId);
+    let reviewedText = '从未标记';
+    if (meta && meta.reviewedAt) {
+      const days = Math.floor((Date.now() - meta.reviewedAt) / 86400000);
+      reviewedText = days <= 0 ? '今日已背' : (days + ' 天前背过');
+    }
+    this.setData({ memo: { id: memo.id, name: memo.name }, sections, flipped: {}, reviewedText });
     // AI 内容文本
     this.contentText = sections.map(s => {
       let t = s.title ? '【' + s.title + '】\n' : '';
@@ -64,6 +78,9 @@ Page({
     if (mode === 'cloze' && !this.data.clozeItems.length) {
       this.buildCloze();
     }
+    if (mode === 'cards' && !this.data.cardCur && !this.data.cardDone) {
+      this.buildCards();
+    }
     if (mode === 'ai' && !this.data.messages.length) {
       patch.messages = ai.newChat(this.data.aiMode, this.contentText);
       patch.scrollTo = 'msg-end';
@@ -76,6 +93,62 @@ Page({
     const flipped = Object.assign({}, this.data.flipped);
     flipped[key] = !flipped[key];
     this.setData({ flipped });
+  },
+  markReviewed() {
+    store.markMemoReviewed(this.memoId);
+    this.setData({ reviewedText: '今日已背' });
+    wx.showToast({ title: '已标记，3 天后提醒复习', icon: 'success' });
+  },
+  /* ---------- 闪卡 ---------- */
+  buildCards() {
+    const qa = [];
+    this.data.sections.forEach(s => {
+      (s.qa || []).forEach(pair => qa.push({ front: pair.q, back: pair.a }));
+    });
+    if (qa.length === 0) {
+      this.setData({ cardsEmpty: true });
+      return;
+    }
+    const deck = util.shuffle(qa);
+    this.cardDeck = deck;
+    this.setData({
+      cardsEmpty: false,
+      cardDone: false,
+      cardCur: deck[0],
+      cardFlipped: false,
+      cardLeft: deck.length,
+      cardsDone: 0
+    });
+  },
+  flipCard() {
+    this.setData({ cardFlipped: !this.data.cardFlipped });
+  },
+  markCard(e) {
+    const know = e.currentTarget.dataset.know === '1';
+    const deck = (this.cardDeck || []).slice();
+    const cur = deck.shift();
+    if (!cur) return;
+    if (know) {
+      // 会了：移出队列
+      const cardsDone = this.data.cardsDone + 1;
+      this.cardDeck = deck;
+      if (deck.length === 0) {
+        this.setData({ cardDone: true, cardsDone, cardLeft: 0, cardCur: null, cardFlipped: false });
+        wx.vibrateShort({ type: 'light' });
+        return;
+      }
+      this.setData({ cardCur: deck[0], cardFlipped: false, cardsDone, cardLeft: deck.length });
+    } else {
+      // 不会：排到队尾再来一遍
+      deck.push(cur);
+      this.cardDeck = deck;
+      this.setData({ cardCur: deck[0], cardFlipped: false, cardLeft: deck.length });
+    }
+  },
+  restartCards() {
+    this.cardDeck = null;
+    this.setData({ cardDone: false, cardCur: null });
+    this.buildCards();
   },
   /* ---------- 挖空自测 ---------- */
   buildCloze() {

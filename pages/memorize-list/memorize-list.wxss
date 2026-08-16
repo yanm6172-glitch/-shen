@@ -8,7 +8,28 @@
 .topbar-title { font-size: 34rpx; font-weight: 800; }
 .topbar-btn { font-size: 26rpx; line-height: 2.2; padding: 0 28rpx; }
 
+.rule-card {
+  margin: 8rpx 24rpx;
+  background: #EAF1FE;
+  border-radius: 16rpx;
+  padding: 18rpx 24rpx;
+  font-size: 24rpx;
+  color: #1E40AF;
+  line-height: 1.7;
+}
+
 .memo-card { margin-top: 16rpx; }
 .memo-name { font-size: 32rpx; font-weight: 700; }
 .memo-del { font-size: 24rpx; color: #EF4444; padding: 4rpx 12rpx; }
 .memo-go { color: #6C5CE7; font-weight: 600; font-size: 26rpx; }
+
+.review-badge {
+  font-size: 22rpx;
+  font-weight: 700;
+  border-radius: 20rpx;
+  padding: 4rpx 16rpx;
+}
+.st-new { background: #F1EEFF; color: #6C5CE7; }
+.st-ok { background: #E7F8F1; color: #10B981; }
+.st-due { background: #FEF3E2; color: #F59E0B; }
+.st-over { background: #FDECEC; color: #EF4444; }

@@ -2,8 +2,15 @@
   <!-- 模式切换 -->
   <view class="mode-tabs">
     <view class="mode-tab {{mode==='browse'?'active':''}}" bindtap="switchMode" data-mode="browse">浏览</view>
-    <view class="mode-tab {{mode==='cloze'?'active':''}}" bindtap="switchMode" data-mode="cloze">挖空自测</view>
-    <view class="mode-tab {{mode==='ai'?'active':''}}" bindtap="switchMode" data-mode="ai">AI 互动背书</view>
+    <view class="mode-tab {{mode==='cloze'?'active':''}}" bindtap="switchMode" data-mode="cloze">挖空</view>
+    <view class="mode-tab {{mode==='cards'?'active':''}}" bindtap="switchMode" data-mode="cards">闪卡</view>
+    <view class="mode-tab {{mode==='ai'?'active':''}}" bindtap="switchMode" data-mode="ai">AI 互动</view>
+  </view>
+
+  <!-- 复习标记 -->
+  <view class="review-bar">
+    <text class="text-3">🗓 记忆曲线：{{reviewedText}}</text>
+    <view class="review-mark" bindtap="markReviewed">✅ 标记今日已背</view>
   </view>
 
   <!-- 浏览模式 -->
@@ -19,7 +26,7 @@
         </view>
       </view>
     </view>
-    <view class="tip-line">💡 提示：切到「挖空自测」检查背诵，「AI 互动背书」让 AI 考你</view>
+    <view class="tip-line">💡 提示：「挖空」检查背诵，「闪卡」翻牌记忆，「AI 互动」让 AI 考你</view>
   </block>
 
   <!-- 挖空自测 -->
@@ -61,6 +68,43 @@
       <button wx:if="{{!clozeChecked}}" class="btn btn-primary flex1" bindtap="checkCloze">检查答案</button>
       <button wx:else class="btn btn-primary flex1" bindtap="resetCloze">重新挖空</button>
     </view>
+  </block>
+
+  <!-- 闪卡 -->
+  <block wx:if="{{mode==='cards'}}">
+    <view wx:if="{{cardsEmpty}}" class="empty">
+      <view class="empty-icon">🃏</view>
+      <view>这段内容没有问答卡</view>
+      <view class="text-3 mt8">用「问：xxx / 答：xxx」格式导入内容即可生成闪卡</view>
+    </view>
+    <block wx:elif="{{cardDone}}">
+      <view class="card-done">
+        <view class="done-icon">🎉</view>
+        <view class="done-title">全部过完！</view>
+        <view class="done-sub">已会 {{cardsDone}} 张闪卡</view>
+        <button class="btn btn-primary mt16" bindtap="restartCards">再来一遍</button>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="flash-progress">
+        <text>剩余 {{cardLeft}} 张 · 已会 {{cardsDone}} 张</text>
+      </view>
+      <view class="flash-card {{cardFlipped ? 'flipped' : ''}}" bindtap="flipCard">
+        <view class="flash-face flash-front">
+          <view class="flash-label">问题</view>
+          <view class="flash-text">{{cardCur.front}}</view>
+        </view>
+        <view class="flash-face flash-back">
+          <view class="flash-label">答案</view>
+          <view class="flash-text">{{cardCur.back}}</view>
+        </view>
+      </view>
+      <view class="flash-tip">{{cardFlipped ? '点击卡片翻回问题' : '点击卡片显示答案'}}</view>
+      <view class="row gap8 mt16">
+        <button class="btn btn-danger flex1" bindtap="markCard" data-know="0">😵 不会，稍后再来</button>
+        <button class="btn btn-primary flex1" bindtap="markCard" data-know="1">😎 会了，下一张</button>
+      </view>
+    </block>
   </block>
 
   <!-- AI 互动 -->

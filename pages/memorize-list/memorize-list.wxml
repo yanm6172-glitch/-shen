@@ -4,6 +4,8 @@
     <button class="btn btn-primary topbar-btn" bindtap="goImport">＋ 导入内容</button>
   </view>
 
+  <view class="rule-card">🧠 记忆曲线：背诵后 3 天提醒复习，7 天未复习标记逾期；背完点「✅ 标记今日已背」</view>
+
   <block wx:if="{{memos.length}}">
     <view class="card memo-card" wx:for="{{memos}}" wx:key="id" bindtap="goMemo" data-id="{{item.id}}">
       <view class="row space-between">
@@ -12,6 +14,10 @@
       </view>
       <view class="row space-between mt8">
         <text class="text-2">{{item.sections}} 个章节 · {{item.dateStr}}</text>
+        <view class="review-badge {{item.statusCls}}">{{item.statusText}}</view>
+      </view>
+      <view class="row space-between mt8">
+        <text class="text-3">浏览 · 挖空 · 闪卡 · AI 互动</text>
         <text class="memo-go">开始背书 ›</text>
       </view>
     </view>
