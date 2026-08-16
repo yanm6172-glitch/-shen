@@ -2,9 +2,29 @@
 .head-card .bank-name { font-size: 36rpx; font-weight: 800; }
 .head-card .badge { margin-right: 8rpx; margin-top: 8rpx; }
 
+.search-box { display: flex; align-items: center; padding: 20rpx 30rpx; margin-top: 16rpx; }
+.search-input { flex: 1; font-size: 28rpx; }
+.search-ph { color: #B4B9C9; }
+.search-clear { color: #9AA0B5; padding: 0 12rpx; font-size: 30rpx; }
+
+.filter-row { display: flex; gap: 20rpx; margin: 8rpx 24rpx 0; }
+.filter-tab {
+  flex: 1;
+  text-align: center;
+  background: #fff;
+  border-radius: 40rpx;
+  padding: 16rpx 0;
+  font-size: 26rpx;
+  color: #6B7080;
+  box-shadow: 0 4rpx 14rpx rgba(35, 38, 47, 0.05);
+}
+.filter-tab.on { background: linear-gradient(135deg, #6C5CE7, #8E7CFF); color: #fff; font-weight: 700; }
+
 .q-card { margin-top: 16rpx; }
 .q-stem { font-size: 28rpx; line-height: 1.6; margin-left: 12rpx; }
 .q-card .badge { flex-shrink: 0; margin-top: 4rpx; }
+.fav-star { font-size: 40rpx; color: #C4C9D6; margin-right: 12rpx; line-height: 1; flex-shrink: 0; }
+.fav-star.on { color: #FFB347; }
 
 .opt-line { font-size: 26rpx; color: #6B7080; margin: 8rpx 0; }
 .ans-line { font-size: 26rpx; color: #10B981; margin: 8rpx 0; }

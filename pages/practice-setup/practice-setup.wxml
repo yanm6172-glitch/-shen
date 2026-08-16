@@ -45,6 +45,14 @@
       </view>
       <switch checked="{{autoNext}}" bindchange="toggleAutoNext" color="#6C5CE7" />
     </view>
+    <view class="divider"></view>
+    <view class="row space-between">
+      <view>
+        <view class="field-label">考试模式</view>
+        <view class="text-3">计时作答、可回看修改，交卷后统一判分出成绩</view>
+      </view>
+      <switch checked="{{examMode}}" bindchange="toggleExamMode" color="#FF9F43" />
+    </view>
   </view>
 
   <view class="card">

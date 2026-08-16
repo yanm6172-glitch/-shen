@@ -1,17 +1,44 @@
 <view class="page" wx:if="{{bank}}">
   <view class="card head-card">
-    <view class="bank-name">{{bank.name}}</view>
-    <view class="row mt8">
-      <text class="badge badge-single">单选{{bank.typeStats.single}}</text>
-      <text class="badge badge-multi">多选{{bank.typeStats.multi}}</text>
-      <text class="badge badge-judge">判断{{bank.typeStats.judge}}</text>
-      <text class="badge badge-fill">填空{{bank.typeStats.fill}}</text>
-      <text class="badge badge-short">解答{{bank.typeStats.short}}</text>
+    <view class="row space-between">
+      <view class="bank-name">{{bank.name}}</view>
+      <view class="row">
+        <text class="badge badge-single">单选{{bank.typeStats.single}}</text>
+        <text class="badge badge-multi">多选{{bank.typeStats.multi}}</text>
+        <text class="badge badge-judge">判断{{bank.typeStats.judge}}</text>
+        <text class="badge badge-fill">填空{{bank.typeStats.fill}}</text>
+        <text class="badge badge-short">解答{{bank.typeStats.short}}</text>
+      </view>
     </view>
+  </view>
+
+  <!-- 搜索 -->
+  <view class="search-box card">
+    <input
+      class="search-input"
+      value="{{keyword}}"
+      bindinput="onSearch"
+      placeholder="搜索题干 / 选项 / 答案…"
+      placeholder-class="search-ph"
+      confirm-type="search"
+    />
+    <view wx:if="{{keyword}}" class="search-clear" bindtap="clearSearch">✕</view>
+  </view>
+
+  <!-- 筛选 -->
+  <view class="filter-row">
+    <view class="filter-tab {{filterMode==='all'?'on':''}}" bindtap="setFilter" data-mode="all">全部 {{allCount}}</view>
+    <view class="filter-tab {{filterMode==='fav'?'on':''}}" bindtap="setFilter" data-mode="fav">★ 收藏 {{favCount}}</view>
+  </view>
+
+  <view wx:if="{{questions.length === 0}}" class="empty">
+    <view class="empty-icon">{{filterMode==='fav' ? '☆' : '🔍'}}</view>
+    <view>{{filterMode==='fav' ? '还没有收藏题目，点题目前面的 ☆ 收藏' : '没有匹配的题目'}}</view>
   </view>
 
   <view class="card q-card" wx:for="{{questions}}" wx:key="id" bindtap="toggleExpand" data-id="{{item.id}}">
     <view class="row">
+      <view class="fav-star {{item.fav?'on':''}}" catchtap="toggleFavQ" data-id="{{item.id}}">{{item.fav ? '★' : '☆'}}</view>
       <view class="badge badge-{{item.type}}">{{item.typeName}}</view>
       <view class="q-stem flex1">{{item.stem}}</view>
     </view>

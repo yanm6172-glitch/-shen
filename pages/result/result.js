@@ -15,6 +15,11 @@ Page({
       return;
     }
     const summary = practice.summarizeSession(session);
+    if (summary.durationSec > 0) {
+      const mm = Math.floor(summary.durationSec / 60);
+      const ss = summary.durationSec % 60;
+      summary.durText = mm > 0 ? (mm + ' 分 ' + ss + ' 秒') : (ss + ' 秒');
+    }
     const reviewList = summary.results.map(r => {
       const typeName = { single: '单选', multi: '多选', judge: '判断', fill: '填空', short: '解答' }[r.type];
       return {

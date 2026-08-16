@@ -10,6 +10,7 @@ Page({
     shuffleQuestions: true,
     shuffleOptions: true,
     autoNext: false,
+    examMode: false,
     wrongBooks: [],
     targetIndex: 0,          // 0 = 不加入错题集
     removeAfter: 3
@@ -59,6 +60,9 @@ Page({
   toggleAutoNext(e) {
     this.setData({ autoNext: e.detail.value });
   },
+  toggleExamMode(e) {
+    this.setData({ examMode: e.detail.value });
+  },
   createWrongBook() {
     wx.showModal({
       title: '新建错题集',
@@ -94,7 +98,8 @@ Page({
         shuffleQuestions: this.data.shuffleQuestions,
         shuffleOptions: this.data.shuffleOptions,
         wrongBookTargetId: targetId,
-        removeAfter: this.data.removeAfter
+        removeAfter: this.data.removeAfter,
+        examMode: this.data.examMode
       });
       session.autoNext = this.data.autoNext;   // 答对自动跳下一题（可自行选择）
       store.saveSettings({ lastBankId: this.bankId });   // 首页"快速开始"记住最近题库
@@ -104,7 +109,8 @@ Page({
         count,
         shuffleQuestions: this.data.shuffleQuestions,
         shuffleOptions: this.data.shuffleOptions,
-        wrongBookTargetId: targetId
+        wrongBookTargetId: targetId,
+        examMode: this.data.examMode
       };
       store.saveSession(session);
       wx.navigateTo({ url: '/pages/practice/practice' });

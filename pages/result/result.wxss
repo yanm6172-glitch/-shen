@@ -12,6 +12,7 @@
 .score-num { font-size: 96rpx; font-weight: 800; line-height: 1.1; }
 .score-label { font-size: 26rpx; opacity: 0.85; }
 .score-detail { font-size: 24rpx; opacity: 0.9; margin-top: 16rpx; }
+.score-dur { font-size: 24rpx; opacity: 0.95; font-weight: 700; margin-top: 8rpx; }
 .score-title { font-size: 28rpx; font-weight: 700; margin-top: 12rpx; }
 
 .field-label { font-weight: 700; margin-bottom: 16rpx; }

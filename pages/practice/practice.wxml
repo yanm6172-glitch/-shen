@@ -3,21 +3,36 @@
   <view class="topbar">
     <view class="topbar-left">
       <view class="topbar-title">{{title}}</view>
-      <view class="topbar-count">{{index + 1}} / {{total}} · 已对 {{correctCount}}</view>
+      <view class="topbar-count">{{index + 1}} / {{total}} · {{examMode ? '已答 ' + examAnswered : '已对 ' + correctCount}}</view>
     </view>
-    <view class="exit-btn" bindtap="exit">退出</view>
+    <view class="row">
+      <view wx:if="{{examMode}}" class="exam-clock">⏱ {{examClock}}</view>
+      <view class="exit-btn" bindtap="exit">退出</view>
+    </view>
   </view>
   <view class="progress-bar">
     <view class="progress-fill" style="width: {{progress}}%"></view>
   </view>
 
+  <!-- 考试模式提示条 -->
+  <view wx:if="{{examMode}}" class="exam-bar">
+    <text>📝 考试模式：作答即时保存，交卷后统一判分</text>
+    <view class="exam-submit-btn" bindtap="confirmExam">交卷</view>
+  </view>
+
   <!-- 题目卡片 -->
   <view class="card q-card">
-    <view class="row">
-      <view class="badge badge-{{dq.type}}">
-        {{dq.type==='single'?'单选题':dq.type==='multi'?'多选题':dq.type==='judge'?'判断题':dq.type==='fill'?'填空题':'解答题'}}
+    <view class="row space-between">
+      <view class="row">
+        <view class="badge badge-{{dq.type}}">
+          {{dq.type==='single'?'单选题':dq.type==='multi'?'多选题':dq.type==='judge'?'判断题':dq.type==='fill'?'填空题':'解答题'}}
+        </view>
+        <view wx:if="{{!hasAnswer}}" class="badge no-answer">无参考答案</view>
+        <block wx:if="{{examMode}}">
+          <view wx:if="{{isExamAnswered}}" class="badge answered">已作答</view>
+        </block>
       </view>
-      <view wx:if="{{!hasAnswer}}" class="badge no-answer">无参考答案</view>
+      <view class="fav-btn {{fav?'on':''}}" bindtap="toggleFav">{{fav ? '★' : '☆'}}</view>
     </view>
     <view class="stem">{{dq.stem}}</view>
 
@@ -49,7 +64,9 @@
           <view class="opt-text">{{item.text}}</view>
         </view>
       </view>
-      <button wx:if="{{phase==='answer'}}" class="btn btn-primary btn-block mt16" bindtap="confirmMulti">确认答案</button>
+      <block wx:if="{{phase==='answer'}}">
+        <button wx:if="{{!examMode}}" class="btn btn-primary btn-block mt16" bindtap="confirmMulti">确认答案</button>
+      </block>
     </block>
 
     <!-- 判断 -->
@@ -72,7 +89,9 @@
           disabled="{{phase!=='answer'}}"
         />
       </view>
-      <button wx:if="{{phase==='answer'}}" class="btn btn-primary btn-block mt16" bindtap="confirmFill">确认答案</button>
+      <block wx:if="{{phase==='answer'}}">
+        <button wx:if="{{!examMode}}" class="btn btn-primary btn-block mt16" bindtap="confirmFill">确认答案</button>
+      </block>
     </block>
 
     <!-- 解答 -->
@@ -84,7 +103,9 @@
         placeholder="写下你的答案…"
         disabled="{{phase!=='answer'}}"
       ></textarea>
-      <button wx:if="{{phase==='answer'}}" class="btn btn-primary btn-block mt16" bindtap="submitShort">提交答案</button>
+      <block wx:if="{{phase==='answer'}}">
+        <button wx:if="{{!examMode}}" class="btn btn-primary btn-block mt16" bindtap="submitShort">提交答案</button>
+      </block>
     </block>
 
     <!-- 无参考答案自判 -->
@@ -93,6 +114,15 @@
       <view class="row gap8">
         <button class="btn btn-primary flex1" bindtap="selfGrade" data-grade="right">我答对了</button>
         <button class="btn btn-danger flex1" bindtap="selfGrade" data-grade="wrong">我答错了</button>
+      </view>
+    </block>
+
+    <!-- 考试模式底部导航 -->
+    <block wx:if="{{examMode}}">
+      <view class="exam-nav mt16">
+        <button class="btn btn-ghost flex1" bindtap="examPrev" disabled="{{index === 0}}">上一题</button>
+        <view class="exam-nav-count">{{index + 1}} / {{total}}</view>
+        <button class="btn btn-primary flex1" bindtap="examNext">{{isExamLast ? '交卷' : '下一题'}}</button>
       </view>
     </block>
 

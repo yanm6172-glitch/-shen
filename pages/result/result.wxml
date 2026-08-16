@@ -3,6 +3,7 @@
     <view class="score-num">{{summary.score}}</view>
     <view class="score-label">得分</view>
     <view class="score-detail">共 {{summary.total}} 题 · 已答 {{summary.answered}} · 答对 {{summary.correct}} · 答错 {{summary.wrong}}{{summary.unjudged ? ' · 解答题提交 ' + summary.unjudged + ' 题' : ''}}</view>
+    <view wx:if="{{summary.durText}}" class="score-dur">⏱ 用时 {{summary.durText}}</view>
     <view class="score-title">{{summary.title}}</view>
   </view>
 

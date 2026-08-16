@@ -1,8 +1,6 @@
 const store = require('../../utils/store');
 const practice = require('../../utils/practice');
 
-const TYPE_NAMES = { single: '单选', multi: '多选', judge: '判断', fill: '填空', short: '解答' };
-
 Page({
   data: {
     title: '',
@@ -25,10 +23,16 @@ Page({
     hasAnswer: true,
     lastResult: null,
     canAddShortWrong: false,
-    canRemoveShortWrong: false
-  },
-  onUnload() {
-    if (this.autoNextTimer) clearTimeout(this.autoNextTimer);
+    canRemoveShortWrong: false,
+    // 收藏
+    fav: false,
+    // 考试模式
+    examMode: false,
+    examClock: '00:00',
+    examAnswered: 0,
+    examSkip: 0,
+    isExamAnswered: false,
+    isExamLast: false
   },
   onLoad() {
     const session = store.loadSession();
@@ -38,13 +42,66 @@ Page({
       return;
     }
     this.session = session;
+    this.examAnswers = session.examAnswers || {};
+    if (session.examMode && !session.examStartedAt) {
+      session.examStartedAt = Date.now();
+      store.saveSession(session);
+    }
     this.renderCurrent();
   },
+  onShow() {
+    if (this.session && this.session.examMode && !this.session.finished) {
+      this.startClock();
+    }
+  },
+  onHide() {
+    this.stopClock();
+  },
+  onUnload() {
+    this.stopClock();
+    if (this.autoNextTimer) clearTimeout(this.autoNextTimer);
+  },
+  /* ---------- 考试模式计时 ---------- */
+  startClock() {
+    this.stopClock();
+    this.tickClock();
+    this.clockTimer = setInterval(() => this.tickClock(), 1000);
+  },
+  stopClock() {
+    if (this.clockTimer) { clearInterval(this.clockTimer); this.clockTimer = null; }
+  },
+  tickClock() {
+    const s = this.session;
+    const sec = Math.max(0, Math.floor(((Date.now() - (s.examStartedAt || Date.now())) / 1000)));
+    const mm = Math.floor(sec / 60);
+    const ss = sec % 60;
+    this.setData({ examClock: (mm < 10 ? '0' + mm : mm) + ':' + (ss < 10 ? '0' + ss : ss) });
+  },
+  /* ---------- 渲染当前题 ---------- */
   renderCurrent() {
     const s = this.session;
     const dq = s.questions[s.index];
     const optionStates = {};
     (dq.options || []).forEach(o => { optionStates[o.key] = 'normal'; });
+
+    // 考试模式：回填已存答案
+    let selected = '';
+    let multiSelected = {};
+    let judgeChoice = '';
+    let fillInputs = new Array(dq.blankCount || 1).fill('').map((v, i) => ({ id: 'f' + i, value: '' }));
+    let shortText = '';
+    const isExam = !!s.examMode;
+    if (isExam && this.examAnswers[s.index] !== undefined) {
+      const ua = this.examAnswers[s.index];
+      if (dq.type === 'single') selected = ua || '';
+      else if (dq.type === 'judge') judgeChoice = ua || '';
+      else if (dq.type === 'multi') (ua || []).forEach(k => { multiSelected[k] = true; });
+      else if (dq.type === 'fill') {
+        fillInputs = fillInputs.map((f, i) => ({ id: f.id, value: (ua && ua[i]) || '' }));
+      } else if (dq.type === 'short' && ua) shortText = ua.text || '';
+    }
+    const examAnswered = isExam ? Object.keys(this.examAnswers).length : 0;
+
     this.setData({
       title: s.title,
       index: s.index,
@@ -53,11 +110,11 @@ Page({
       correctCount: s.results.filter(r => r.correct).length,
       dq,
       phase: 'answer',
-      selected: '',
-      multiSelected: {},
-      judgeChoice: '',
-      fillInputs: new Array(dq.blankCount || 1).fill('').map((v, i) => ({ id: 'f' + i, value: '' })),
-      shortText: '',
+      selected,
+      multiSelected,
+      judgeChoice,
+      fillInputs,
+      shortText,
       optionStates,
       fillStates: [],
       gradeMsg: '',
@@ -65,7 +122,13 @@ Page({
       correctAnswerText: this.answerTextOf(dq),
       hasAnswer: dq.hasAnswer,
       canAddShortWrong: false,
-      canRemoveShortWrong: false
+      canRemoveShortWrong: false,
+      fav: !!store.getFavorites()[dq.qid],
+      examMode: isExam,
+      examAnswered,
+      examSkip: isExam ? Math.max(0, s.questions.length - examAnswered) : 0,
+      isExamAnswered: isExam && this.examAnswers[s.index] !== undefined,
+      isExamLast: isExam && s.index === s.questions.length - 1
     });
   },
   answerTextOf(dq) {
@@ -80,24 +143,36 @@ Page({
     }
     return dq.answerText || '';
   },
+  /* ---------- 收藏 ---------- */
+  toggleFav() {
+    const qid = this.data.dq.qid;
+    const on = store.toggleFavorite(qid);
+    this.setData({ fav: on });
+    wx.showToast({ title: on ? '已收藏' : '已取消收藏', icon: 'none' });
+  },
   /* ---------- 作答交互 ---------- */
   tapOption(e) {
     if (this.data.phase !== 'answer') return;
     const key = e.currentTarget.dataset.key;
     if (this.data.dq.type === 'single') {
       this.setData({ selected: key });
+      if (this.session.examMode) { this.examSet(key); return; }
       if (this.data.dq.hasAnswer) this.grade(key);
       else this.enterManual();
     } else {
       const multiSelected = Object.assign({}, this.data.multiSelected);
       multiSelected[key] = !multiSelected[key];
       this.setData({ multiSelected });
+      if (this.session.examMode) {
+        this.examSet(Object.keys(multiSelected).filter(k => multiSelected[k]));
+      }
     }
   },
   tapJudge(e) {
     if (this.data.phase !== 'answer') return;
     const key = e.currentTarget.dataset.key;
     this.setData({ judgeChoice: key });
+    if (this.session.examMode) { this.examSet(key); return; }
     if (this.data.dq.hasAnswer) this.grade(key);
     else this.enterManual();
   },
@@ -118,6 +193,7 @@ Page({
       i === idx ? { id: f.id, value: e.detail.value } : f
     );
     this.setData({ fillInputs });
+    if (this.session.examMode) this.examSet(fillInputs.map(f => f.value || ''));
   },
   confirmFill() {
     if (this.data.phase !== 'answer') return;
@@ -128,6 +204,7 @@ Page({
   },
   shortInput(e) {
     this.setData({ shortText: e.detail.value });
+    if (this.session.examMode) this.examSet({ grade: 'submit', text: e.detail.value });
   },
   // 解答题：只提交，不判对错
   submitShort() {
@@ -139,6 +216,68 @@ Page({
     }
     const g = { correct: null, detail: { unjudged: true, grade: 'submit' } };
     this.finishGrade(g, { grade: 'submit', text });
+  },
+  /* ---------- 考试模式：暂存答案与导航 ---------- */
+  examSet(value) {
+    this.examAnswers[this.session.index] = value;
+    this.session.examAnswers = this.examAnswers;
+    const examAnswered = Object.keys(this.examAnswers).length;
+    this.setData({
+      examAnswered,
+      examSkip: Math.max(0, this.session.questions.length - examAnswered),
+      isExamAnswered: true
+    });
+    store.saveSession(this.session);
+  },
+  examPrev() {
+    if (this.session.index <= 0) return;
+    this.session.index--;
+    store.saveSession(this.session);
+    this.renderCurrent();
+  },
+  examNext() {
+    if (this.session.index >= this.session.questions.length - 1) {
+      this.confirmExam();
+      return;
+    }
+    this.session.index++;
+    store.saveSession(this.session);
+    this.renderCurrent();
+  },
+  confirmExam() {
+    const s = this.session;
+    const answered = Object.keys(this.examAnswers).length;
+    const skip = s.questions.length - answered;
+    wx.showModal({
+      title: '交卷确认',
+      content: skip > 0 ? '还有 ' + skip + ' 题未作答（未答计为答错），确定交卷吗？' : '全部作答完毕，确定交卷吗？',
+      confirmText: '交卷',
+      cancelText: '再看看',
+      success: res => {
+        if (res.confirm) this.finalizeExam();
+      }
+    });
+  },
+  finalizeExam() {
+    const s = this.session;
+    s.durationSec = Math.max(0, Math.round((Date.now() - (s.examStartedAt || Date.now())) / 1000));
+    s.questions.forEach((q, i) => {
+      const ua = this.examAnswers[i];
+      if (ua === undefined) {
+        const g = { correct: false, detail: { manual: true, grade: 'wrong', skipped: true } };
+        practice.recordAnswer(s, q, g, null);
+      } else if (q.type === 'short') {
+        const g = { correct: null, detail: { unjudged: true, grade: 'submit' } };
+        practice.recordAnswer(s, q, g, ua);
+      } else {
+        const g = practice.gradeDisplayQuestion(q, ua);
+        practice.recordAnswer(s, q, g, ua);
+      }
+    });
+    const sum = practice.summarizeSession(s);
+    store.addStats(sum);
+    store.saveSession(s);
+    wx.redirectTo({ url: '/pages/result/result' });
   },
   // 解答题提交后手动加入错题集
   addShortWrong() {

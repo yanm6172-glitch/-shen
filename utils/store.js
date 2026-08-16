@@ -11,6 +11,7 @@ const KEYS = {
   wrong: 'bsds_wrong_',
   stats: 'bsds_stats',
   daily: 'bsds_daily',
+  fav: 'bsds_fav',
   session: 'bsds_session',
   firstRun: 'bsds_firstrun_v1'
 };
@@ -345,6 +346,8 @@ function clearAllData() {
   remove(KEYS.memos);
   remove(KEYS.wrongbooks);
   remove(KEYS.stats);
+  remove(KEYS.daily);
+  remove(KEYS.fav);
   remove(KEYS.session);
   // 清理所有 bank_ / memo_ / wrong_ 前缀
   try {
@@ -357,6 +360,24 @@ function clearAllData() {
   set(KEYS.settings, getSettings());
 }
 
+/* ---------------- 收藏 ---------------- */
+
+function getFavorites() {
+  return get(KEYS.fav, {});
+}
+// 返回切换后的收藏状态
+function toggleFavorite(qid) {
+  const favs = getFavorites();
+  if (favs[qid]) {
+    delete favs[qid];
+    set(KEYS.fav, favs);
+    return false;
+  }
+  favs[qid] = Date.now();
+  set(KEYS.fav, favs);
+  return true;
+}
+
 module.exports = {
   KEYS,
   getSettings, saveSettings,
@@ -366,6 +387,7 @@ module.exports = {
   getWrongData, getWrongItems, addWrongItem, removeWrongItem,
   recordWrongResult, makeWrongItem,
   getStats, addStats, getDailyStats,
+  getFavorites, toggleFavorite,
   saveSession, loadSession, clearSession,
   ensureBuiltinImported, clearAllData
 };
