@@ -12,6 +12,7 @@ const KEYS = {
   stats: 'bsds_stats',
   daily: 'bsds_daily',
   fav: 'bsds_fav',
+  qstats: 'bsds_qstats',
   session: 'bsds_session',
   firstRun: 'bsds_firstrun_v1'
 };
@@ -358,6 +359,7 @@ function clearAllData() {
   remove(KEYS.stats);
   remove(KEYS.daily);
   remove(KEYS.fav);
+  remove(KEYS.qstats);
   remove(KEYS.session);
   // 清理所有 bank_ / memo_ / wrong_ 前缀
   try {
@@ -388,6 +390,23 @@ function toggleFavorite(qid) {
   return true;
 }
 
+/* ---------------- 每题作答记录（智能组卷/状态点） ---------------- */
+
+function getQStats() {
+  return get(KEYS.qstats, {});
+}
+// correct: true/false；null（不判分）不记录
+function recordQuestionResult(qid, correct) {
+  if (correct === null || correct === undefined || !qid) return;
+  const qs = getQStats();
+  const r = qs[qid] || { done: 0, correct: 0, wrong: 0, last: 0 };
+  r.done++;
+  r.last = Date.now();
+  if (correct) r.correct++; else r.wrong++;
+  qs[qid] = r;
+  set(KEYS.qstats, qs);
+}
+
 module.exports = {
   KEYS,
   getSettings, saveSettings,
@@ -398,6 +417,7 @@ module.exports = {
   recordWrongResult, makeWrongItem,
   getStats, addStats, getDailyStats,
   getFavorites, toggleFavorite,
+  getQStats, recordQuestionResult,
   saveSession, loadSession, clearSession,
   ensureBuiltinImported, clearAllData
 };

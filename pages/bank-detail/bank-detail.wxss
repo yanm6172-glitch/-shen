@@ -20,6 +20,27 @@
 }
 .filter-tab.on { background: linear-gradient(135deg, #6C5CE7, #8E7CFF); color: #fff; font-weight: 700; }
 
+/* 题目状态点 */
+.q-dot {
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  margin: 10rpx 10rpx 0 0;
+  flex-shrink: 0;
+}
+.dot-ok { background: #10B981; }
+.dot-wrong { background: #EF4444; }
+.dot-new { background: #D8DBE6; }
+.legend-row {
+  display: flex;
+  gap: 28rpx;
+  margin: 16rpx 32rpx 0;
+  font-size: 22rpx;
+  color: #6B7080;
+}
+.legend-item { display: flex; align-items: center; gap: 8rpx; }
+.legend-item .q-dot { margin: 0; }
+
 .q-card { margin-top: 16rpx; }
 .q-stem { font-size: 28rpx; line-height: 1.6; margin-left: 12rpx; }
 .q-card .badge { flex-shrink: 0; margin-top: 4rpx; }

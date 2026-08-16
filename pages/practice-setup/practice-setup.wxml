@@ -48,6 +48,14 @@
     <view class="divider"></view>
     <view class="row space-between">
       <view>
+        <view class="field-label">智能组卷</view>
+        <view class="text-3">按「未做题 → 做错过 → 已掌握」顺序出题（开启后乱序题目失效）</view>
+      </view>
+      <switch checked="{{smartMode}}" bindchange="toggleSmartMode" color="#10B981" />
+    </view>
+    <view class="divider"></view>
+    <view class="row space-between">
+      <view>
         <view class="field-label">考试模式</view>
         <view class="text-3">计时作答、可回看修改，交卷后统一判分出成绩</view>
       </view>

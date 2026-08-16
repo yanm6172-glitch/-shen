@@ -125,7 +125,23 @@ function buildSession(opts) {
   }
   if (questions.length === 0) throw new Error('没有符合条件题目');
 
-  if (shuffleQuestions) questions = util.shuffle(questions);
+  if (opts.smartMode && mode === 'bank') {
+    // 智能组卷：未做 → 做错过 → 已掌握，组内乱序
+    const qs = store.getQStats();
+    const groups = [[], [], []];
+    questions.forEach(q => {
+      const st = qs[q.id];
+      if (!st || !st.done) groups[0].push(q);
+      else if (st.wrong > 0) groups[1].push(q);
+      else groups[2].push(q);
+    });
+    questions = [];
+    groups.forEach(g => {
+      questions = questions.concat(shuffleQuestions ? util.shuffle(g) : g);
+    });
+  } else if (shuffleQuestions) {
+    questions = util.shuffle(questions);
+  }
   if (opts.count && opts.count > 0 && opts.count < questions.length) {
     questions = questions.slice(0, opts.count);
   }
@@ -169,6 +185,8 @@ function recordAnswer(session, dq, gradeResult, userAnswer) {
     analysis: dq.analysis
   };
   session.results.push(result);
+  // 每题作答记录（智能组卷 / 题库状态点）
+  store.recordQuestionResult(dq.qid, gradeResult.correct);
 
   let wrongAction = { action: 'none' };
   const removeAfter = session.removeAfter;

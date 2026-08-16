@@ -24,8 +24,15 @@ Page({
       return;
     }
     const favs = store.getFavorites();
+    const qs = store.getQStats();
     const all = bank.questions.map(q => {
       const fav = !!favs[q.id];
+      const st = qs[q.id];
+      let status = 'new', statusText = '未做';
+      if (st && st.done) {
+        if (st.wrong > 0) { status = 'wrong'; statusText = '做错过'; }
+        else { status = 'ok'; statusText = '已掌握'; }
+      }
       return {
         id: q.id,
         type: q.type,
@@ -35,7 +42,9 @@ Page({
         answerText: this.answerText(q),
         analysis: q.analysis,
         hasAnswer: q.hasAnswer,
-        fav
+        fav,
+        status,
+        statusText
       };
     });
     this.allQuestions = all;

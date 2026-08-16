@@ -30,6 +30,11 @@
     <view class="filter-tab {{filterMode==='all'?'on':''}}" bindtap="setFilter" data-mode="all">全部 {{allCount}}</view>
     <view class="filter-tab {{filterMode==='fav'?'on':''}}" bindtap="setFilter" data-mode="fav">★ 收藏 {{favCount}}</view>
   </view>
+  <view class="legend-row">
+    <view class="legend-item"><view class="q-dot dot-ok"></view>已掌握</view>
+    <view class="legend-item"><view class="q-dot dot-wrong"></view>做错过</view>
+    <view class="legend-item"><view class="q-dot dot-new"></view>未做</view>
+  </view>
 
   <view wx:if="{{questions.length === 0}}" class="empty">
     <view class="empty-icon">{{filterMode==='fav' ? '☆' : '🔍'}}</view>
@@ -39,11 +44,12 @@
   <view class="card q-card" wx:for="{{questions}}" wx:key="id" bindtap="toggleExpand" data-id="{{item.id}}">
     <view class="row">
       <view class="fav-star {{item.fav?'on':''}}" catchtap="toggleFavQ" data-id="{{item.id}}">{{item.fav ? '★' : '☆'}}</view>
+      <view class="q-dot dot-{{item.status}}"></view>
       <view class="badge badge-{{item.type}}">{{item.typeName}}</view>
       <view class="q-stem flex1">{{item.stem}}</view>
     </view>
     <view class="row space-between mt8">
-      <text class="text-3">{{item.hasAnswer ? '答案：' + item.answerText : '无参考答案'}}</text>
+      <text class="text-3">{{item.hasAnswer ? '答案：' + item.answerText : '无参考答案'}} · {{item.statusText}}</text>
       <text class="text-3">{{expanded[item.id] ? '收起 ▲' : '展开 ▼'}}</text>
     </view>
     <block wx:if="{{expanded[item.id]}}">
