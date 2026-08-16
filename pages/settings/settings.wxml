@@ -86,6 +86,12 @@
     </view>
     <view class="divider"></view>
     <view class="row gap8">
+      <button class="btn btn-plain flex1" bindtap="exportData">📤 备份数据</button>
+      <button class="btn btn-plain flex1" bindtap="importData">📥 恢复备份</button>
+    </view>
+    <view class="text-3 mt8">备份会复制全部题库/背书/错题/统计/设置到剪贴板，可粘贴到备忘录保存；恢复时粘贴回来即可。</view>
+    <view class="divider"></view>
+    <view class="row gap8">
       <button class="btn btn-ghost flex1" bindtap="reimportBuiltin">重新导入内置内容</button>
       <button class="btn btn-danger flex1" bindtap="clearAll">清空所有数据</button>
     </view>

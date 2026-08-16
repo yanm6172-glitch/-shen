@@ -111,6 +111,27 @@
 .chart-label { margin-top: 10rpx; font-size: 22rpx; color: #9AA0B5; }
 .chart-label.today { color: #FF9F43; font-weight: 800; }
 
+/* 成就墙 */
+.ach-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  margin: 0 24rpx 8rpx;
+}
+.ach-item {
+  width: calc(20% - 13rpx);
+  background: #fff;
+  border-radius: 18rpx;
+  padding: 20rpx 0 16rpx;
+  text-align: center;
+  box-shadow: 0 6rpx 20rpx rgba(35, 38, 47, 0.05);
+}
+.ach-icon { font-size: 44rpx; line-height: 1.2; }
+.ach-name { font-size: 22rpx; color: #23262F; font-weight: 700; margin-top: 8rpx; }
+.ach-prog { font-size: 20rpx; color: #9AA0B5; margin-top: 4rpx; }
+.ach-item.locked { opacity: 0.45; }
+.ach-item.locked .ach-name { color: #9AA0B5; }
+
 /* 统计 */
 .stat-row {
   display: flex;

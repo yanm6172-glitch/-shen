@@ -21,7 +21,9 @@ Page({
     week: [],
     weekTotal: 0,
     quickBankName: '',
-    canQuick: false
+    canQuick: false,
+    achievements: [],
+    achGot: 0
   },
   onShow() {
     const stats = store.getStats();
@@ -53,7 +55,9 @@ Page({
       week: ds.week,
       weekTotal,
       quickBankName: quickBank ? quickBank.name : '',
-      canQuick: !!quickBank
+      canQuick: !!quickBank,
+      achievements: store.getAchievements(),
+      achGot: store.getAchievements().filter(a => a.got).length
     });
   },
   quickStart() {

@@ -80,6 +80,18 @@
     </view>
   </view>
 
+  <!-- 成就 -->
+  <view class="ach-head">
+    <view class="section-title">🏅 成就（{{achGot}}/{{achievements.length}}）</view>
+  </view>
+  <view class="ach-grid">
+    <view class="ach-item {{item.got ? '' : 'locked'}}" wx:for="{{achievements}}" wx:key="id">
+      <view class="ach-icon">{{item.got ? item.icon : '🔒'}}</view>
+      <view class="ach-name">{{item.name}}</view>
+      <view class="ach-prog">{{item.prog}}</view>
+    </view>
+  </view>
+
   <!-- 两大入口 -->
   <view class="entry-row">
     <view class="entry entry-quiz" bindtap="goQuiz">

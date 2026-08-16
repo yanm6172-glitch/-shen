@@ -107,6 +107,43 @@ Page({
       }
     });
   },
+  exportData() {
+    try {
+      const json = store.exportAllData();
+      wx.setClipboardData({
+        data: json,
+        success: () => wx.showToast({ title: '备份已复制到剪贴板（' + Math.round(json.length / 1024) + 'KB）', icon: 'none' })
+      });
+    } catch (e) {
+      wx.showToast({ title: '备份失败', icon: 'none' });
+    }
+  },
+  importData() {
+    wx.showModal({
+      title: '恢复备份',
+      editable: true,
+      placeholderText: '粘贴之前复制的备份文本',
+      success: res => {
+        if (!res.confirm || !res.content || !res.content.trim()) return;
+        try {
+          store.importAllData(res.content.trim()); // 先解析验证
+          wx.showModal({
+            title: '确认恢复',
+            content: '将用备份覆盖当前全部数据（题库/背书/错题集/统计/设置），确定吗？',
+            confirmColor: '#EF4444',
+            success: r2 => {
+              if (!r2.confirm) return;
+              const n = store.importAllData(res.content.trim());
+              wx.showToast({ title: '恢复成功（' + n + ' 项数据）', icon: 'success' });
+              this.onShow();
+            }
+          });
+        } catch (e) {
+          wx.showToast({ title: '解析失败：' + (e.message || '格式不正确'), icon: 'none' });
+        }
+      }
+    });
+  },
   clearAll() {
     wx.showModal({
       title: '清空所有数据',

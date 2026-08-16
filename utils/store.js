@@ -372,7 +372,59 @@ function clearAllData() {
   set(KEYS.settings, getSettings());
 }
 
-/* ---------------- 收藏 ---------------- */
+/* ---------------- 成就系统 ---------------- */
+
+// 返回徽章列表（实时根据数据计算）
+function getAchievements() {
+  const stats = getStats();
+  const daily = getDailyStats();
+  const favs = getFavorites();
+  const banks = getBanks();
+  const memos = getMemos();
+  const acc = stats.answered ? Math.round(stats.correct / stats.answered * 100) : 0;
+  const favCount = Object.keys(favs).length;
+  const hasReview = memos.some(m => m.reviewedAt);
+  return [
+    { id: 'first', icon: '🌱', name: '初次刷题', desc: '完成第 1 道题', got: stats.answered >= 1, prog: Math.min(stats.answered, 1) + '/1' },
+    { id: 'q50', icon: '✏️', name: '小试牛刀', desc: '累计刷 50 题', got: stats.answered >= 50, prog: Math.min(stats.answered, 50) + '/50' },
+    { id: 'q100', icon: '⚔️', name: '百题斩', desc: '累计刷 100 题', got: stats.answered >= 100, prog: Math.min(stats.answered, 100) + '/100' },
+    { id: 'q1000', icon: '🏆', name: '千题达人', desc: '累计刷 1000 题', got: stats.answered >= 1000, prog: Math.min(stats.answered, 1000) + '/1000' },
+    { id: 's3', icon: '🔥', name: '坚持 3 天', desc: '连续打卡 3 天', got: daily.streak >= 3, prog: Math.min(daily.streak, 3) + '/3' },
+    { id: 's7', icon: '💪', name: '坚持 7 天', desc: '连续打卡 7 天', got: daily.streak >= 7, prog: Math.min(daily.streak, 7) + '/7' },
+    { id: 'fav5', icon: '⭐', name: '收藏家', desc: '收藏 5 道题', got: favCount >= 5, prog: Math.min(favCount, 5) + '/5' },
+    { id: 'bank5', icon: '📚', name: '题海无涯', desc: '拥有 5 个题库', got: banks.length >= 5, prog: Math.min(banks.length, 5) + '/5' },
+    { id: 'memo1', icon: '🧠', name: '记忆达人', desc: '完成 1 次背书标记', got: hasReview, prog: (hasReview ? 1 : 0) + '/1' },
+    { id: 'acc', icon: '🎯', name: '神射手', desc: '正确率 ≥ 80%（刷满 50 题）', got: stats.answered >= 50 && acc >= 80, prog: acc + '%' }
+  ];
+}
+
+/* ---------------- 数据备份 ---------------- */
+
+// 导出全部 bsds_* 数据为 JSON 字符串
+function exportAllData() {
+  const data = {};
+  try {
+    const info = wx.getStorageInfoSync();
+    (info.keys || []).forEach(k => {
+      if (k.indexOf('bsds_') === 0) data[k] = wx.getStorageSync(k);
+    });
+  } catch (e) { }
+  return JSON.stringify({ app: 'bsds', version: 1, exportedAt: Date.now(), data });
+}
+// 从备份 JSON 恢复（覆盖现有 bsds_* 数据），返回恢复的键数量
+function importAllData(json) {
+  const parsed = typeof json === 'string' ? JSON.parse(json) : json;
+  const data = (parsed && parsed.data) ? parsed.data : parsed;
+  if (!data || typeof data !== 'object') throw new Error('备份格式不正确');
+  const keys = Object.keys(data);
+  let n = 0;
+  keys.forEach(k => {
+    if (k.indexOf('bsds_') === 0) {
+      try { wx.setStorageSync(k, data[k]); n++; } catch (e) { }
+    }
+  });
+  return n;
+}
 
 function getFavorites() {
   return get(KEYS.fav, {});
@@ -418,6 +470,7 @@ module.exports = {
   getStats, addStats, getDailyStats,
   getFavorites, toggleFavorite,
   getQStats, recordQuestionResult,
+  getAchievements, exportAllData, importAllData,
   saveSession, loadSession, clearSession,
   ensureBuiltinImported, clearAllData
 };
