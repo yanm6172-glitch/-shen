@@ -1,8 +1,35 @@
 <view class="page">
   <!-- 头部 -->
   <view class="hero">
-    <view class="hero-title">背书刷题神器</view>
-    <view class="hero-sub">任意文本一键导入 · 五种题型全识别 · AI 交互背书</view>
+    <view class="hero-top">
+      <view class="flex1">
+        <view class="hero-title">背书刷题神器</view>
+        <view class="hero-sub">{{streak > 0 ? '已连续打卡 ' + streak + ' 天，继续保持！' : '今天开始，每天进步一点点'}}</view>
+      </view>
+      <view class="flame">{{streak > 0 ? '🔥' : '⚡'}}</view>
+    </view>
+
+    <!-- 今日目标 -->
+    <view class="goal-card">
+      <view class="row space-between">
+        <view class="goal-label">今日目标</view>
+        <view class="goal-num">{{goal > 0 ? todayAnswered + ' / ' + goal + ' 题' : '已刷 ' + todayAnswered + ' 题'}}</view>
+      </view>
+      <view class="goal-bar">
+        <view class="goal-fill" style="width: {{goalPercent}}%"></view>
+      </view>
+      <view class="goal-sub">{{goal === 0 ? '在「设置」里开启每日目标' : (goalPercent >= 100 ? '🎉 今日目标已完成！' : '还差 ' + goalLeft + ' 题完成目标')}}</view>
+    </view>
+  </view>
+
+  <!-- 快速开始 -->
+  <view class="quick-start" bindtap="quickStart">
+    <view class="qs-icon">⚡</view>
+    <view class="flex1">
+      <view class="qs-title">{{canQuick ? '快速开始刷题' : '还没有题库'}}</view>
+      <view class="qs-sub">{{canQuick ? quickBankName + ' · 全部题型' : '点这里去导入题目'}}</view>
+    </view>
+    <view class="qs-go">›</view>
   </view>
 
   <!-- 继续上次 -->
@@ -15,21 +42,39 @@
     <view class="text-3">›</view>
   </view>
 
+  <!-- 近 7 天趋势 -->
+  <view class="card">
+    <view class="row space-between mb16">
+      <view class="card-title">近 7 天刷题</view>
+      <view class="text-3">共 {{weekTotal}} 题</view>
+    </view>
+    <view class="chart">
+      <view class="chart-col" wx:for="{{week}}" wx:key="*this">
+        <view class="chart-bar-wrap">
+          <view class="chart-bar {{item.isToday ? 'today' : ''}}" style="height: {{item.percent}}%">
+            <view class="chart-val">{{item.answered || ''}}</view>
+          </view>
+        </view>
+        <view class="chart-label {{item.isToday ? 'today' : ''}}">{{item.isToday ? '今' : item.label}}</view>
+      </view>
+    </view>
+  </view>
+
   <!-- 统计 -->
-  <view class="card stats-card">
-    <view class="stat">
+  <view class="stat-row">
+    <view class="stat-item">
       <view class="stat-num">{{stats.answered}}</view>
       <view class="stat-label">累计答题</view>
     </view>
-    <view class="stat">
+    <view class="stat-item">
       <view class="stat-num green">{{stats.correct}}</view>
       <view class="stat-label">答对</view>
     </view>
-    <view class="stat">
+    <view class="stat-item">
       <view class="stat-num">{{bankCount}}</view>
       <view class="stat-label">题库</view>
     </view>
-    <view class="stat">
+    <view class="stat-item">
       <view class="stat-num">{{wrongTotal}}</view>
       <view class="stat-label">错题</view>
     </view>

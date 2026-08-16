@@ -10,6 +10,7 @@ const KEYS = {
   wrongbooks: 'bsds_wrongbooks',
   wrong: 'bsds_wrong_',
   stats: 'bsds_stats',
+  daily: 'bsds_daily',
   session: 'bsds_session',
   firstRun: 'bsds_firstrun_v1'
 };
@@ -35,6 +36,7 @@ function defaultSettings() {
     shuffleOptions: true,        // 刷题默认：选项乱序
     shuffleQuestions: true,      // 刷题默认：题目乱序
     autoNext: false,             // 刷题默认：答对自动跳下一题（可自行选择）
+    dailyGoal: 20,               // 每日刷题目标（题数，0 = 不设目标）
     ai: {
       baseURL: 'https://api.deepseek.com/v1',
       apiKey: '',
@@ -233,7 +235,68 @@ function addStats(result) {
   s.correct = (s.correct || 0) + (result.correct || 0);
   s.wrong = (s.wrong || 0) + (result.wrong || 0);
   set(KEYS.stats, s);
+  // 每日记录（打卡 / 趋势）
+  const daily = get(KEYS.daily, {});
+  const k = todayKey();
+  const d = daily[k] || { answered: 0, correct: 0, sessions: 0 };
+  d.answered += (result.answered || 0);
+  d.correct += (result.correct || 0);
+  d.sessions += 1;
+  daily[k] = d;
+  set(KEYS.daily, daily);
   return s;
+}
+
+/* ---------------- 每日统计（打卡/趋势/目标） ---------------- */
+
+function pad2(n) { return n < 10 ? '0' + n : '' + n; }
+function keyOf(d) {
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+}
+function todayKey() { return keyOf(new Date()); }
+
+// 返回 {todayAnswered, todayCorrect, todaySessions, streak, week, goal}
+function getDailyStats() {
+  const daily = get(KEYS.daily, {});
+  const goal = getSettings().dailyGoal || 0;
+  const today = daily[todayKey()] || { answered: 0, correct: 0, sessions: 0 };
+  // 连续打卡天数：今天没刷则从昨天起算
+  let streak = 0;
+  const cur = new Date();
+  if (!today.sessions) cur.setDate(cur.getDate() - 1);
+  for (let i = 0; i < 3650; i++) {
+    if (daily[keyOf(cur)] && daily[keyOf(cur)].sessions) {
+      streak++;
+      cur.setDate(cur.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  // 近 7 天趋势（含今天）
+  const labels = ['日', '一', '二', '三', '四', '五', '六'];
+  const week = [];
+  const base = new Date();
+  base.setDate(base.getDate() - 6);
+  for (let i = 0; i < 7; i++) {
+    const d = daily[keyOf(base)] || { answered: 0, correct: 0 };
+    week.push({
+      label: labels[base.getDay()],
+      answered: d.answered || 0,
+      correct: d.correct || 0,
+      isToday: i === 6
+    });
+    base.setDate(base.getDate() + 1);
+  }
+  const max = Math.max.apply(null, week.map(w => w.answered).concat([1]));
+  week.forEach(w => { w.percent = Math.round((w.answered / max) * 100); });
+  return {
+    todayAnswered: today.answered || 0,
+    todayCorrect: today.correct || 0,
+    todaySessions: today.sessions || 0,
+    streak,
+    week,
+    goal
+  };
 }
 
 /* ---------------- 刷题会话 ---------------- */
@@ -302,7 +365,7 @@ module.exports = {
   getWrongBooks, createWrongBook, renameWrongBook, deleteWrongBook,
   getWrongData, getWrongItems, addWrongItem, removeWrongItem,
   recordWrongResult, makeWrongItem,
-  getStats, addStats,
+  getStats, addStats, getDailyStats,
   saveSession, loadSession, clearSession,
   ensureBuiltinImported, clearAllData
 };

@@ -97,6 +97,7 @@ Page({
         removeAfter: this.data.removeAfter
       });
       session.autoNext = this.data.autoNext;   // 答对自动跳下一题（可自行选择）
+      store.saveSettings({ lastBankId: this.bankId });   // 首页"快速开始"记住最近题库
       session.setup = {
         bankId: this.bankId,
         types: enabled,

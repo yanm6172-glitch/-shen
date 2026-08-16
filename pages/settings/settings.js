@@ -7,6 +7,7 @@ Page({
     shuffleOptions: true,
     shuffleQuestions: true,
     autoNext: false,
+    dailyGoal: 20,
     ai: { baseURL: '', apiKey: '', model: '' },
     testing: false,
     stats: null
@@ -18,6 +19,7 @@ Page({
       shuffleOptions: s.shuffleOptions,
       shuffleQuestions: s.shuffleQuestions,
       autoNext: s.autoNext,
+      dailyGoal: s.dailyGoal,
       ai: { baseURL: s.ai.baseURL, apiKey: s.ai.apiKey, model: s.ai.model },
       stats: store.getStats()
     });
@@ -46,6 +48,12 @@ Page({
   toggleAutoNext(e) {
     this.setData({ autoNext: e.detail.value });
     store.saveSettings({ autoNext: e.detail.value });
+  },
+  stepGoal(e) {
+    const d = Number(e.currentTarget.dataset.v);
+    const val = Math.max(0, Math.min(200, this.data.dailyGoal + d));
+    this.setData({ dailyGoal: val });
+    store.saveSettings({ dailyGoal: val });
   },
   onAIInput(e) {
     const field = e.currentTarget.dataset.field;

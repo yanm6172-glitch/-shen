@@ -43,6 +43,18 @@
       </view>
       <switch checked="{{autoNext}}" bindchange="toggleAutoNext" color="#6C5CE7" />
     </view>
+    <view class="divider"></view>
+    <view class="row space-between">
+      <view>
+        <view class="field-label">每日刷题目标</view>
+        <view class="text-3">{{dailyGoal === 0 ? '未设置目标' : '每天刷 ' + dailyGoal + ' 题'}}（首页显示进度）</view>
+      </view>
+      <view class="stepper">
+        <view class="step-btn" bindtap="stepGoal" data-v="-5">−</view>
+        <view class="step-num">{{dailyGoal === 0 ? '—' : dailyGoal}}</view>
+        <view class="step-btn" bindtap="stepGoal" data-v="5">＋</view>
+      </view>
+    </view>
   </view>
 
   <!-- AI 接口 -->
