@@ -135,6 +135,12 @@
       </view>
       <view wx:if="{{correctAnswerText}}" class="answer-box">📖 参考答案：{{correctAnswerText}}</view>
       <view wx:if="{{dq.analysis}}" class="analysis-box">💡 解析：{{dq.analysis}}</view>
+      <block wx:if="{{lastResult.correct === false}}">
+        <button class="btn btn-ghost btn-block mt16" bindtap="aiExplain" disabled="{{aiExplainLoading}}">
+          {{aiExplainLoading ? '🤖 AI 讲解生成中…' : '🤖 AI 讲解这题'}}
+        </button>
+      </block>
+      <view wx:if="{{aiExplainText}}" class="ai-explain-box">🤖 {{aiExplainText}}</view>
       <view wx:if="{{canAddShortWrong}}" class="row mt16">
         <button class="btn btn-plain flex1" bindtap="addShortWrong">＋ 加入错题集</button>
       </view>

@@ -68,6 +68,32 @@ Page({
       }
     });
   },
+  copyAll() {
+    const items = store.getWrongItems(this.bookId);
+    if (items.length === 0) {
+      wx.showToast({ title: '错题集是空的', icon: 'none' });
+      return;
+    }
+    const typeName = { single: '单选', multi: '多选', judge: '判断', fill: '填空', short: '解答' };
+    const lines = [];
+    items.forEach((it, i) => {
+      const q = it.question || {};
+      const a = q.answer || {};
+      lines.push((i + 1) + '.（' + (typeName[q.type] || '') + '）' + q.stem);
+      (q.options || []).forEach(o => { lines.push(o.key + '. ' + o.text); });
+      let ans = '';
+      if (q.type === 'single' || q.type === 'multi') ans = (a.correctTexts || []).join('、') || (a.letters || []).join('');
+      else if (q.type === 'judge') ans = a.judge ? '对' : '错';
+      else if (q.type === 'fill') ans = (a.blanks || []).map(b => (b || []).join('/')).filter(x => x).join('；');
+      else ans = a.text || '';
+      lines.push('答案：' + (ans || '无'));
+      lines.push('');
+    });
+    wx.setClipboardData({
+      data: lines.join('\n'),
+      success: () => wx.showToast({ title: '已复制 ' + items.length + ' 道错题', icon: 'success' })
+    });
+  },
   startPractice() {
     if (this.data.items.length === 0) {
       wx.showToast({ title: '错题集是空的', icon: 'none' });

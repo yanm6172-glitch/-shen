@@ -174,3 +174,13 @@
   color: #4C3BA8;
   line-height: 1.7;
 }
+.ai-explain-box {
+  margin-top: 16rpx;
+  background: #EAF1FE;
+  border-radius: 14rpx;
+  padding: 20rpx 24rpx;
+  font-size: 27rpx;
+  color: #1E40AF;
+  line-height: 1.8;
+  border-left: 6rpx solid #4A7CF7;
+}

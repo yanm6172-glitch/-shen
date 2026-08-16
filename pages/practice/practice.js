@@ -1,5 +1,6 @@
 const store = require('../../utils/store');
 const practice = require('../../utils/practice');
+const ai = require('../../utils/ai');
 
 Page({
   data: {
@@ -32,7 +33,10 @@ Page({
     examAnswered: 0,
     examSkip: 0,
     isExamAnswered: false,
-    isExamLast: false
+    isExamLast: false,
+    // AI 讲解
+    aiExplainLoading: false,
+    aiExplainText: ''
   },
   onLoad() {
     const session = store.loadSession();
@@ -128,7 +132,9 @@ Page({
       examAnswered,
       examSkip: isExam ? Math.max(0, s.questions.length - examAnswered) : 0,
       isExamAnswered: isExam && this.examAnswers[s.index] !== undefined,
-      isExamLast: isExam && s.index === s.questions.length - 1
+      isExamLast: isExam && s.index === s.questions.length - 1,
+      aiExplainLoading: false,
+      aiExplainText: ''
     });
   },
   answerTextOf(dq) {
@@ -149,6 +155,37 @@ Page({
     const on = store.toggleFavorite(qid);
     this.setData({ fav: on });
     wx.showToast({ title: on ? '已收藏' : '已取消收藏', icon: 'none' });
+  },
+  /* ---------- AI 讲解 ---------- */
+  aiExplain() {
+    if (this.data.aiExplainLoading) return;
+    const dq = this.data.dq;
+    const qText = '题目：' + dq.stem + '\n' +
+      (dq.options && dq.options.length ? '选项：\n' + dq.options.map(o => o.key + '. ' + o.text).join('\n') + '\n' : '') +
+      '正确答案：' + (this.answerTextOf(dq) || '无参考答案') +
+      (dq.analysis ? '\n解析：' + dq.analysis : '');
+    const messages = [
+      { role: 'system', content: '你是刷题辅导老师。请用简洁易懂的中文讲解这道题：正确答案为什么对、其他选项为什么错、涉及什么知识点。200字以内，直接讲，不要客套。' },
+      { role: 'user', content: qText }
+    ];
+    this.setData({ aiExplainLoading: true, aiExplainText: '' });
+    ai.callAI(messages, { maxTokens: 500 }).then(reply => {
+      this.setData({ aiExplainLoading: false, aiExplainText: reply });
+    }).catch(err => {
+      this.setData({ aiExplainLoading: false });
+      const msg = ai.friendlyError(err);
+      if (msg.indexOf('还没有配置') >= 0 || msg.indexOf('密钥') >= 0) {
+        wx.showModal({
+          title: '需要配置 AI 接口',
+          content: msg,
+          confirmText: '去设置',
+          cancelText: '关闭',
+          success: res => { if (res.confirm) wx.switchTab({ url: '/pages/settings/settings' }); }
+        });
+      } else {
+        wx.showToast({ title: msg.slice(0, 24), icon: 'none' });
+      }
+    });
   },
   /* ---------- 作答交互 ---------- */
   tapOption(e) {

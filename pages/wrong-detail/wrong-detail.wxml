@@ -26,7 +26,8 @@
     </view>
 
     <view class="bottom-bar">
-      <button class="btn btn-primary btn-block" bindtap="startPractice">刷错题（{{items.length}} 题）</button>
+      <button class="btn btn-plain half" bindtap="copyAll">📋 复制错题</button>
+      <button class="btn btn-primary half" bindtap="startPractice">刷错题（{{items.length}} 题）</button>
     </view>
   </block>
 
